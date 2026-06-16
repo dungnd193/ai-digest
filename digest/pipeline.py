@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import logging
 import time
+from datetime import datetime, timedelta
 
 from digest.agents.approval import encode_callback
 from digest.agents.reporter import RunReport
+from digest.core.content_types import slugify
 from digest.core.models import make_id
 from digest.core.post_state import PostRecord, PostState
 from digest.core.timing import timed
@@ -68,26 +70,42 @@ class Pipeline:
             clusters = self.clusterer.cluster(processed)
         with timed("analyze", report.timings):
             digest = self.analyst.analyze(clusters)
-        with timed("write", report.timings):
-            en_posts = self.writer.write(digest, date=self.date)
-
-        # group: each kept EN post + its VI translation
+        # per-story: write -> quality gate -> translate, timing each sub-step so the
+        # report shows how long EACH post took and its breakdown.
         groups: list[dict] = []
-        with timed("translate+gate", report.timings):
-            for en in en_posts:
-                # dedup: never re-offer/re-publish a story already decided
-                existing = self.post_store.get(self._key(en))
+        with timed("content (write+gate+translate)", report.timings):
+            for entry, ts in self._ordered_entries(digest.entries):
+                key = f"{self.date[:10]}:{slugify(entry.title)[:47]}"
+                existing = self.post_store.get(key)
                 if existing is not None and existing.state in ("published", "discarded"):
-                    report.errors.append(f"skipped duplicate (already {existing.state}): {en.title}")
+                    report.errors.append(f"skipped duplicate (already {existing.state}): {entry.title}")
                     continue
+
+                pt: dict = {"title": entry.title}
+                t = time.perf_counter()
+                try:
+                    en = self.writer.write_one(entry, ts)
+                except Exception as exc:  # noqa: BLE001 - one failure shouldn't abort
+                    report.errors.append(f"write failed: {entry.title} ({exc})")
+                    continue
+                pt["write"] = round(time.perf_counter() - t, 1)
+
+                t = time.perf_counter()
                 verdict = self.quality_gate.check(en)
+                pt["gate"] = round(time.perf_counter() - t, 1)
                 if not verdict.passed:
                     report.errors.append(f"quality gate rejected: {en.title} ({verdict.reason})")
                     continue
+
                 posts = [en]
                 if "vi" in self.languages:
+                    t = time.perf_counter()
                     posts.append(self.translator.translate(en))
-                groups.append({"en": en, "posts": posts})
+                    pt["translate"] = round(time.perf_counter() - t, 1)
+
+                pt["total"] = round(sum(pt.get(k, 0) for k in ("write", "gate", "translate")), 1)
+                report.post_timings.append(pt)
+                groups.append({"en": en, "posts": posts, "key": key})
 
         all_posts = [p for g in groups for p in g["posts"]]
         report.posts_written = len(groups)
@@ -116,7 +134,7 @@ class Pipeline:
         files_by_post = dict(zip(all_posts, files, strict=True))
         for g in groups:
             en = g["en"]
-            key = self._key(en)
+            key = g["key"]
             g_files = [str(files_by_post[p]) for p in g["posts"]]
             article_ids = [make_id(u) for u in en.sources]
             buttons = [
@@ -141,11 +159,20 @@ class Pipeline:
         self.publisher.commit_and_push("post: daily digest", repo_dir=self.repo_dir)
         report.published = len({p.slug for p in all_posts})
 
-    @staticmethod
-    def _key(post) -> str:
-        # day (not full datetime) + capped slug -> callback_data stays <64 bytes,
-        # and the same story on the same day dedups even across runs.
-        return f"{post.date[:10]}:{post.slug[:47]}"
+    def _ordered_entries(self, entries) -> list:
+        """(entry, timestamp) pairs: most important first, each with a strictly
+        decreasing timestamp so the site sorts newest-run-first then by importance.
+        The day part of the timestamp also keys dedup (callback_data <64 bytes)."""
+        try:
+            base = datetime.fromisoformat(self.date)
+        except ValueError:
+            base = None
+        ranked = sorted(entries, key=lambda e: -e.importance)
+        out = []
+        for i, entry in enumerate(ranked):
+            ts = (base - timedelta(seconds=i)).isoformat(timespec="seconds") if base else self.date
+            out.append((entry, ts))
+        return out
 
     @staticmethod
     def _interleave_by_source(articles):

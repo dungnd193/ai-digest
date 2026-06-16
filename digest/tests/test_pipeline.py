@@ -1,13 +1,14 @@
+import dataclasses
 from unittest.mock import MagicMock
 
-from digest.core.content_types import BlogPost, QualityVerdict
+from digest.core.content_types import BlogPost, QualityVerdict, slugify
 from digest.core.digest_types import Digest, DigestEntry
 from digest.core.models import Article
 from digest.pipeline import Pipeline
 
 
-def _en_post(slug="s"):
-    return BlogPost(lang="en", title="T", slug=slug, date="2026-06-16",
+def _en_post(slug="s", title="T"):
+    return BlogPost(lang="en", title=title, slug=slug, date="2026-06-16",
                     category="Tools", tags=("ai",), summary="sum", body="b",
                     sources=("https://a.com",))
 
@@ -30,8 +31,11 @@ def _build(**over):
     deps["analyst"].analyze.return_value = Digest(entries=(DigestEntry(
         title="T", category="Tools", summary="sum", importance=4,
         sources=("https://a.com",), tags=("ai",)),))
-    deps["writer"].write.return_value = [_en_post()]
-    deps["translator"].translate.return_value = _en_post(slug="s")  # vi stand-in
+    # per-story pipeline calls write_one(entry, ts); return a post keyed by title
+    deps["writer"].write_one.side_effect = (
+        lambda entry, date: _en_post(slug=slugify(entry.title), title=entry.title)
+    )
+    deps["translator"].translate.side_effect = lambda p: dataclasses.replace(p, lang="vi")
     deps["quality_gate"].check.return_value = QualityVerdict(passed=True, reason="ok")
     deps["telegram"].send_message.return_value = 99
     # write_posts returns a path per post (mocked as strings)
@@ -142,13 +146,24 @@ def test_pipeline_dry_run_writes_but_does_not_push():
 
 def test_pipeline_callback_key_truncates_long_slug():
     deps = _build(approval_required=True)
-    long_slug = "x" * 120
-    deps["writer"].write.return_value = [_en_post(slug=long_slug)]
+    long_title = "X" * 120
+    deps["analyst"].analyze.return_value = Digest(entries=(DigestEntry(
+        title=long_title, category="Tools", summary="s", importance=4,
+        sources=("https://a.com",), tags=()),))
     Pipeline(**deps).run()
     rec = deps["post_store"].upsert.call_args.args[0]
     # callback_data is "<action>:<key>"; longest prefix is "disc:" (5 bytes).
     # Telegram caps callback_data at 64 bytes.
     assert len("disc:" + rec.key) <= 64
+
+
+def test_pipeline_records_per_post_timings():
+    deps = _build(approval_required=False)
+    report = Pipeline(**deps).run()
+    assert len(report.post_timings) == 1
+    pt = report.post_timings[0]
+    assert pt["title"] == "T"
+    assert "write" in pt and "gate" in pt and "translate" in pt and "total" in pt
 
 
 def test_pipeline_skips_already_published_duplicate():

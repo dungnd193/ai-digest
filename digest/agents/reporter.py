@@ -18,6 +18,7 @@ class RunReport:
     duration_s: float = 0.0
     timings: dict = field(default_factory=dict)     # stage -> seconds
     published_titles: list[str] = field(default_factory=list)
+    post_timings: list = field(default_factory=list)  # [{title, write, gate, translate, total}]
 
 
 def _fmt_secs(s: float) -> str:
@@ -52,9 +53,22 @@ class Reporter:
             lines.append("")
             lines.append("<b>Posts:</b>")
             lines += [f"  • {t}" for t in report.published_titles]
+        if report.post_timings:
+            lines.append("")
+            lines.append("<b>⏱️ Per-post:</b>")
+            for p in report.post_timings:
+                sub = []
+                if p.get("write"):     sub.append(f"write {_fmt_secs(p['write'])}")
+                if p.get("gate"):      sub.append(f"gate {_fmt_secs(p['gate'])}")
+                if p.get("translate"): sub.append(f"vi {_fmt_secs(p['translate'])}")
+                title = p.get("title", "?")[:42]
+                lines.append(f"  • <b>{title}</b> — {_fmt_secs(p.get('total', 0))}")
+                if sub:
+                    lines.append(f"      {' · '.join(sub)}")
+
         if report.timings:
             lines.append("")
-            lines.append("<b>⏱️ Stage timings:</b>")
+            lines.append("<b>⏱️ Stage totals:</b>")
             lines += [f"  • {stage}: {_fmt_secs(secs)}" for stage, secs in report.timings.items()]
         if report.errors:
             lines.append("")

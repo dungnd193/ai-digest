@@ -76,24 +76,32 @@ class Writer:
     def __init__(self, router: Router) -> None:
         self.router = router
 
-    def write(self, digest: Digest, *, date: str) -> list[BlogPost]:
-        # most important first; give each a strictly decreasing timestamp so the
-        # site sorts newest-run-first and, within a run, by importance.
+    @staticmethod
+    def ordered_entries(entries, date: str) -> list[tuple[DigestEntry, str]]:
+        """Sort entries by importance (desc) and pair each with a strictly
+        decreasing timestamp, so the site sorts newest-run-first then by
+        importance. Shared by write() and the per-post pipeline loop."""
         try:
             base = datetime.fromisoformat(date)
         except ValueError:
             base = None
-        entries = sorted(digest.entries, key=lambda e: -e.importance)
-        posts: list[BlogPost] = []
-        for i, entry in enumerate(entries):
+        ranked = sorted(entries, key=lambda e: -e.importance)
+        out = []
+        for i, entry in enumerate(ranked):
             ts = (base - timedelta(seconds=i)).isoformat(timespec="seconds") if base else date
+            out.append((entry, ts))
+        return out
+
+    def write(self, digest: Digest, *, date: str) -> list[BlogPost]:
+        posts: list[BlogPost] = []
+        for entry, ts in self.ordered_entries(digest.entries, date):
             try:
-                posts.append(self._write_one(entry, ts))
+                posts.append(self.write_one(entry, ts))
             except Exception as exc:  # noqa: BLE001 - one failure shouldn't abort
                 logger.warning("writing failed for %r: %s", entry.title, exc)
         return posts
 
-    def _write_one(self, entry: DigestEntry, date: str) -> BlogPost:
+    def write_one(self, entry: DigestEntry, date: str) -> BlogPost:
         raw = self.router.run(
             _PROMPT.format(title=entry.title, summary=entry.summary), tier="smart",
             label=f"writer:{entry.title[:30]}",
