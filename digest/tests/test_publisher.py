@@ -89,3 +89,12 @@ def test_commit_and_push_skip_push(tmp_path):
         ok = pub.commit_and_push("msg", repo_dir=tmp_path, push=False)
     assert ok is True
     assert not any(c.args[0][:2] == ["git", "push"] for c in run.call_args_list)
+
+
+def test_mark_published_flips_draft_flag(tmp_path):
+    from digest.agents.publisher import Publisher
+    f = tmp_path / "p.md"
+    f.write_text("---\ndraft: true\n---\n\nBody.\n", encoding="utf-8")
+    Publisher(site_dir=tmp_path).mark_published([f])
+    assert "draft: false" in f.read_text(encoding="utf-8")
+    assert "draft: true" not in f.read_text(encoding="utf-8")

@@ -61,6 +61,14 @@ class Publisher:
         logger.error("git push exhausted retries; commit kept locally")
         return False
 
+    def mark_published(self, paths: list) -> None:
+        """Flip draft front-matter to published for already-written files."""
+        from pathlib import Path as _Path
+        for p in paths:
+            path = _Path(p)
+            text = path.read_text(encoding="utf-8")
+            path.write_text(text.replace("draft: true", "draft: false", 1), encoding="utf-8")
+
     @staticmethod
     def _git(cmd: list[str], cwd: str):
         return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
