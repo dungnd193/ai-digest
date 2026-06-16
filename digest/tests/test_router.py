@@ -50,3 +50,19 @@ def test_router_raises_after_exhausting_retries():
     with pytest.raises(BackendError):
         r.run("task", tier="smart")
     assert smart.generate.call_count == 3  # initial + 2 retries
+
+
+def test_build_router_constructs_from_env_and_settings(monkeypatch):
+    monkeypatch.setenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    monkeypatch.setenv("OLLAMA_MODEL", "gemma3:4b")
+    monkeypatch.setenv("CLAUDE_BIN", "claude")
+
+    from digest.core.router import build_router
+
+    r = build_router()
+    # cheap is Ollama, smart is Claude — verify by routing with mocks patched out
+    from digest.core.backends import ClaudeBackend, OllamaBackend
+
+    assert isinstance(r._backends["cheap"], OllamaBackend)
+    assert isinstance(r._backends["smart"], ClaudeBackend)
+    assert r._backends["cheap"].model == "gemma3:4b"
