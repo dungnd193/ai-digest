@@ -29,7 +29,8 @@ class Analyst:
         if not clusters:
             return Digest(entries=())
         listing = self._render(clusters)
-        raw = self.router.run(_PROMPT.format(listing=listing), tier="smart")
+        raw = self.router.run(_PROMPT.format(listing=listing), tier="smart",
+                              label=f"analyst:{len(clusters)} clusters")
         try:
             data = extract_json(raw)
             if not isinstance(data, list):

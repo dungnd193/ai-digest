@@ -55,13 +55,16 @@ class Translator:
         # Short fields drift to the wrong language on the weak local model, so
         # use the smart tier for them in every mode except gemma_only.
         short_tier = "cheap" if self.mode == "gemma_only" else "smart"
-        body = self._translate_text(post.body)
+        tag = post.title[:26]
+        body = self._translate_text(post.body, tag)
         title = self.router.run(
-            _SHORT.format(kind="title", text=post.title), tier=short_tier
+            _SHORT.format(kind="title", text=post.title), tier=short_tier,
+            label=f"translate-title:{tag}",
         ).strip()
         summary = (
             self.router.run(
-                _SHORT.format(kind="summary", text=post.summary), tier=short_tier
+                _SHORT.format(kind="summary", text=post.summary), tier=short_tier,
+                label=f"translate-summary:{tag}",
             ).strip()
             if post.summary
             else ""
@@ -78,15 +81,19 @@ class Translator:
             sources=post.sources,
         )
 
-    def _translate_text(self, text: str) -> str:
+    def _translate_text(self, text: str, tag: str = "") -> str:
         if self.mode == "claude_only":
-            return self.router.run(_DRAFT.format(body=text), tier="smart").strip()
-        draft = self.router.run(_DRAFT.format(body=text), tier="cheap").strip()
+            return self.router.run(_DRAFT.format(body=text), tier="smart",
+                                   label=f"translate-body:{tag}").strip()
+        draft = self.router.run(_DRAFT.format(body=text), tier="cheap",
+                                label=f"translate-draft:{tag}").strip()
         if self.mode == "gemma_only":
             return draft
         # draft_then_review: if the weak local model produced an empty/truncated
         # draft, reviewing it makes the smart model reply "no content to improve".
         # Fall back to a full smart translation of the original instead.
         if len(draft) < max(20, int(len(text) * 0.2)):
-            return self.router.run(_DRAFT.format(body=text), tier="smart").strip()
-        return self.router.run(_REVIEW.format(draft=draft), tier="smart").strip()
+            return self.router.run(_DRAFT.format(body=text), tier="smart",
+                                   label=f"translate-body:{tag}").strip()
+        return self.router.run(_REVIEW.format(draft=draft), tier="smart",
+                               label=f"translate-review:{tag}").strip()

@@ -33,7 +33,7 @@ class QualityGate:
             body=post.body[:4000],
         )
         try:
-            raw = self.router.run(prompt, tier="smart")
+            raw = self.router.run(prompt, tier="smart", label=f"quality:{post.title[:30]}")
             data = extract_json(raw)
             if not isinstance(data, dict) or "pass" not in data:
                 raise JSONExtractError("missing 'pass'")

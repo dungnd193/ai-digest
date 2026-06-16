@@ -32,7 +32,7 @@ class Processor:
             title=article.title,
             content=article.content[:2000],
         )
-        raw = self.router.run(prompt, tier="cheap")
+        raw = self.router.run(prompt, tier="cheap", label=f"processor:{article.title[:30]}")
         try:
             data = extract_json(raw)
             if not isinstance(data, dict):

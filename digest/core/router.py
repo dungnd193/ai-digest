@@ -33,19 +33,25 @@ class Router:
         self.retries = retries
         self.backoff_base = backoff_base
 
-    def run(self, task: str, tier: str, *, system: str | None = None) -> str:
+    def run(self, task: str, tier: str, *, system: str | None = None, label: str = "") -> str:
         if tier not in self._backends:
             raise ValueError(f"unknown tier: {tier!r} (expected 'cheap' or 'smart')")
         backend = self._backends[tier]
+        who = label or "(call)"
 
         last_error: BackendError | None = None
         for attempt in range(self.retries + 1):
             t0 = time.perf_counter()
             try:
                 out = backend.generate(task, system=system)
-                logger.info("call tier=%s %.2fs (%d chars)", tier, time.perf_counter() - t0, len(out))
+                preview = " ".join(out.split())[:90]
+                logger.info(
+                    "%-24s tier=%-6s %5.2fs out=%-4d | %s",
+                    who, tier, time.perf_counter() - t0, len(out), preview,
+                )
                 return out
             except BackendError as exc:
+                logger.warning("%-24s tier=%-6s attempt %d failed: %s", who, tier, attempt + 1, exc)
                 last_error = exc
                 if attempt < self.retries:
                     time.sleep(self.backoff_base * (2**attempt))

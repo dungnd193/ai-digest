@@ -60,7 +60,7 @@ class Discovery:
             "Is this article relevant to the topic? Answer with only YES or NO."
         )
         try:
-            answer = self.router.run(prompt, tier="cheap")
+            answer = self.router.run(prompt, tier="cheap", label=f"discovery?:{keyword[:20]}")
         except Exception as exc:  # noqa: BLE001 - be permissive on filter failure
             logger.warning("relevance check failed, keeping article: %s", exc)
             return True

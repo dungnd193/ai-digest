@@ -26,7 +26,8 @@ class Clusterer:
             return []
         listing = "\n".join(f"{i}: {p.article.title}" for i, p in enumerate(items))
         raw = self.router.run(
-            _PROMPT.format(n=len(items) - 1, listing=listing), tier="cheap"
+            _PROMPT.format(n=len(items) - 1, listing=listing), tier="cheap",
+            label=f"clusterer:{len(items)} items",
         )
         try:
             groups = extract_json(raw)

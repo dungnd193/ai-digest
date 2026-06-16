@@ -95,7 +95,8 @@ class Writer:
 
     def _write_one(self, entry: DigestEntry, date: str) -> BlogPost:
         raw = self.router.run(
-            _PROMPT.format(title=entry.title, summary=entry.summary), tier="smart"
+            _PROMPT.format(title=entry.title, summary=entry.summary), tier="smart",
+            label=f"writer:{entry.title[:30]}",
         )
         body = _clean_body(_strip_shortcodes(raw))
         body += "\n\n## Sources\n" + "\n".join(f"- {u}" for u in entry.sources)
