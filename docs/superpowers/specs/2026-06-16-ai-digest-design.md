@@ -291,6 +291,13 @@ Bổ trợ:
 **Để sau (🔴 — YAGNI hiện tại):**
 - Weekly roundup, multi-author, comments, analytics nâng cao, migrate sang Astro/React.
 
+### Trang Kiến trúc & Tài liệu dự án (làm CUỐI CÙNG)
+- Tạo một trang/phần doc về **kiến trúc dự án** + tài liệu tổng quan, dùng skill
+  `/home/dungnd/Desktop/Workspace/ai-digest/.claude/skills/generate-architecture-diagrams`
+  (sinh sơ đồ kiến trúc PNG + Draw.io bằng Python `diagrams` library).
+- **Thời điểm:** Đây là **task cuối cùng**, chỉ thực hiện **sau khi tất cả task/fix khác đã được approve và hoàn tất**.
+- **Lý do:** Tránh phải rework/cập nhật sơ đồ + doc liên tục theo code thay đổi; chốt một lần trên codebase cuối cùng.
+
 ---
 
 ## 13. Quyết định đã chốt (tóm tắt)
