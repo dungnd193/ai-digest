@@ -2,6 +2,8 @@ baseURL = "https://example.github.io/ai-digest/"
 title = "AI Digest"
 defaultContentLanguage = "en"
 defaultContentLanguageInSubdir = true
+buildFuture = true            # never hide same-day posts due to clock/timezone skew
+timeZone = "Asia/Ho_Chi_Minh"
 
 [languages.en]
 languageName = "English"

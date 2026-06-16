@@ -46,7 +46,8 @@ def _setup_logging(run_ts: str) -> Path:
 
 def main(run_date: str | None = None) -> None:
     load_env()
-    run_ts = run_date or datetime.now().isoformat(timespec="seconds")
+    # timezone-aware so Hugo doesn't treat naive timestamps as UTC (future-dating)
+    run_ts = run_date or datetime.now().astimezone().isoformat(timespec="seconds")
     log_path = _setup_logging(run_ts)
     logging.getLogger(__name__).info("AI Digest run %s — logging to %s", run_ts, log_path)
 

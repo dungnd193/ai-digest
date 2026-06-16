@@ -23,5 +23,9 @@ def render_post(post: BlogPost, *, draft: bool = False) -> str:
 
 
 def post_filename(post: BlogPost) -> str:
-    """Hugo multilingual filename: <date>-<slug>.<lang>.md."""
-    return f"{post.date}-{post.slug}.{post.lang}.md"
+    """Hugo multilingual filename: <YYYY-MM-DD>-<slug>.<lang>.md.
+
+    Uses only the date part — post.date may be a full ISO datetime (kept in
+    front-matter for time-sorting), but ':' in a filename breaks Hugo.
+    """
+    return f"{post.date[:10]}-{post.slug}.{post.lang}.md"

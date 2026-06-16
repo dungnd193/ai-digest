@@ -39,3 +39,10 @@ def test_render_post_draft_flag():
 def test_post_filename_uses_date_slug_lang():
     assert post_filename(_post("en")) == "2026-06-16-ai-agents.en.md"
     assert post_filename(_post("vi")) == "2026-06-16-ai-agents.vi.md"
+
+
+def test_post_filename_strips_datetime_to_date():
+    p = BlogPost(lang="en", title="T", slug="my-slug", date="2026-06-16T17:48:40",
+                 category="Tools", tags=(), summary="", body="b", sources=())
+    assert post_filename(p) == "2026-06-16-my-slug.en.md"
+    assert ":" not in post_filename(p)
