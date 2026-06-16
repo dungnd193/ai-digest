@@ -2,7 +2,7 @@ schedule: daily                       # informational; real scheduling is via cr
 model_mode: claude_only               # wired: claude_only | both | ollama_only
 languages: [en, vi]                   # wired
 vi_keep_english_terms: true           # informational; the translator prompt always keeps EN terms
-articles_per_run: 6                   # wired: cap per run (interleaved across sources for diversity)
+articles_per_run: 10                  # wired: cap per run (interleaved across sources for diversity)
 translator_mode: draft_then_review    # wired: gemma_only | draft_then_review | claude_only
 approval_required: false              # wired: false = auto-publish (no Telegram buttons)
 categories: [Research, Tools, Industry, Tutorial, Opinion]   # wired
