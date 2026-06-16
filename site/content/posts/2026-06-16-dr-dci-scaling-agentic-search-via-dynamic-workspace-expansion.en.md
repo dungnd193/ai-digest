@@ -20,7 +20,7 @@ summary: Dr-DCI is a retriever-steered framework for agentic search that lets an
   trained search-agent baselines while reducing tool calls, time, and cost. The benchmark
   gains and efficiency claims make it a notable contribution to retrieval-augmented
   agents, though results are not yet independently verified.
-draft: true
+draft: false
 ---
 
 Search agents have a scaling problem that does not announce itself until the corpus gets big. The retrieve-then-read loop works fine on a curated index, but the failure modes shift as the document store grows from a demo-sized collection into something that looks like the real world. Dr-DCI is a recent proposal that takes this scaling problem head on, and its core idea is deceptively simple: instead of letting the agent reason over the entire corpus, give it a small, evolving workspace and let it decide what to bring in.

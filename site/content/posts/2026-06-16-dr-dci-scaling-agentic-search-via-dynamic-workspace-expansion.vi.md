@@ -22,7 +22,7 @@ summary: Dr-DCI là một framework được điều hướng bởi retriever ch
   Những cải thiện về benchmark và các tuyên bố về hiệu suất khiến nó trở thành một
   đóng góp đáng chú ý cho các retrieval-augmented agent, mặc dù các kết quả vẫn chưa
   được kiểm chứng độc lập.
-draft: true
+draft: false
 ---
 
 Search agents có một vấn đề về scaling không tự bộc lộ ra cho đến khi corpus trở nên lớn. Vòng lặp retrieve-then-read hoạt động ổn trên một index đã được tuyển chọn kỹ, nhưng các failure mode thay đổi khi document store phình to từ một collection cỡ demo thành thứ gì đó giống với thế giới thực. Dr-DCI là một đề xuất gần đây đối mặt trực diện với vấn đề scaling này, và ý tưởng cốt lõi của nó đơn giản đến mức gây ngộ nhận: thay vì để agent reason trên toàn bộ corpus, hãy cho nó một workspace nhỏ, luôn biến đổi, và để nó tự quyết định cần đưa gì vào đó.
