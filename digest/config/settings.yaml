@@ -1,0 +1,17 @@
+schedule: daily
+languages: [en, vi]
+vi_keep_english_terms: true
+articles_per_run: 8
+translator_mode: draft_then_review
+approval_required: true
+categories: [Research, Tools, Industry, Tutorial, Opinion]
+discovery:
+  enabled: true
+  keywords: ["multi-agent LLM", "AI automation", "agentic workflows"]
+steps:
+  digest: true
+  blog: true
+  publish: true
+notify:
+  telegram_daily_summary: true
+  telegram_error_alert: true
