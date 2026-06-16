@@ -2,6 +2,7 @@ import importlib
 from unittest.mock import MagicMock
 
 from digest.approver import handle_update
+from digest.core.telegram import TelegramError
 
 
 def test_entrypoints_import_without_side_effects():
@@ -48,3 +49,31 @@ def test_handle_update_handles_bad_callback_data_gracefully():
     handle_update(update, service, tg)
     service.apply.assert_not_called()
     tg.answer_callback.assert_called_once()
+
+
+def test_handle_update_survives_stale_callback_400():
+    # answerCallbackQuery on an expired callback returns HTTP 400 -> TelegramError.
+    # The decision is already applied; this must NOT propagate and kill the service.
+    service = MagicMock(); service.apply.return_value = "✅ Published: T"
+    tg = MagicMock()
+    tg.answer_callback.side_effect = TelegramError("400 Bad Request")
+    update = {
+        "update_id": 4,
+        "callback_query": {"id": "old", "data": "pub:2026-06-16:s",
+                           "message": {"message_id": 7}},
+    }
+    handle_update(update, service, tg)  # must not raise
+    service.apply.assert_called_once_with("pub", "2026-06-16:s")
+    tg.edit_message_text.assert_called_once()  # still attempts the edit
+
+
+def test_handle_update_survives_edit_failure():
+    service = MagicMock(); service.apply.return_value = "ok"
+    tg = MagicMock()
+    tg.edit_message_text.side_effect = TelegramError("400")
+    update = {
+        "update_id": 5,
+        "callback_query": {"id": "q", "data": "hold:2026-06-16:s",
+                           "message": {"message_id": 9}},
+    }
+    handle_update(update, service, tg)  # must not raise

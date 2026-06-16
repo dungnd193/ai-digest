@@ -10,11 +10,20 @@ from digest.agents.publisher import Publisher
 from digest.core.config import load_env
 from digest.core.post_state import PostStore
 from digest.core.state import SeenStore
-from digest.core.telegram import TelegramClient
+from digest.core.telegram import TelegramClient, TelegramError
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 _ROOT = Path(__file__).resolve().parent.parent
+
+
+def _safe(call, *args) -> None:
+    """Run a non-critical Telegram call; a stale callback (HTTP 400) or other
+    transient error must NOT abort approval — the decision is already applied."""
+    try:
+        call(*args)
+    except TelegramError as exc:
+        logger.warning("non-fatal Telegram call failed: %s", exc)
 
 
 def handle_update(update: dict, service: ApprovalService, telegram: TelegramClient) -> None:
@@ -25,12 +34,12 @@ def handle_update(update: dict, service: ApprovalService, telegram: TelegramClie
     try:
         action, key = decode_callback(cq.get("data", ""))
     except ValueError:
-        telegram.answer_callback(cq["id"], "Unknown action")
+        _safe(telegram.answer_callback, cq["id"], "Unknown action")
         return
     message = service.apply(action, key)
-    telegram.answer_callback(cq["id"], message)
+    _safe(telegram.answer_callback, cq["id"], message)
     if cq.get("message"):
-        telegram.edit_message_text(cq["message"]["message_id"], message)
+        _safe(telegram.edit_message_text, cq["message"]["message_id"], message)
 
 
 def build_service() -> tuple[ApprovalService, TelegramClient]:
@@ -60,7 +69,12 @@ def main() -> None:
             continue
         for upd in updates:
             offset = upd["update_id"] + 1
-            handle_update(upd, service, telegram)
+            try:
+                handle_update(upd, service, telegram)
+            except Exception as exc:  # noqa: BLE001 - one bad update must not kill the service
+                logger.warning(
+                    "handle_update failed for update %s: %s", upd.get("update_id"), exc
+                )
 
 
 if __name__ == "__main__":
