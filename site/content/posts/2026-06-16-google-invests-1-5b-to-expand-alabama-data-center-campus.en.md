@@ -17,7 +17,7 @@ summary: Google announced a $1.5 billion investment to expand its data center ca
   to add capacity for AI and cloud workloads. Beyond compute, it carries local economic
   and infrastructure implications for the region. It is one data point in an industry-wide
   capital surge rather than a standalone strategic shift.
-draft: true
+draft: false
 ---
 
 When Google says it is putting another **$1.5 billion** into a single data center campus in **Jackson County, Alabama**, the dollar figure is the least interesting part. The interesting part is what it represents: one more line item in a capital surge that is reshaping where compute lives, how regional economies absorb it, and what "infrastructure" even means in the AI era.

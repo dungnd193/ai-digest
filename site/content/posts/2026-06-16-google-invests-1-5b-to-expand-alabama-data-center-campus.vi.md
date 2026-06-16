@@ -19,7 +19,7 @@ summary: Google đã công bố khoản đầu tư 1,5 tỷ USD để mở rộn
   Ngoài khía cạnh compute, nó còn mang lại những tác động về kinh tế và hạ tầng tại
   địa phương. Đây là một điểm dữ liệu trong đợt bùng nổ vốn toàn ngành thay vì là
   một sự chuyển dịch chiến lược đơn lẻ.
-draft: true
+draft: false
 ---
 
 Khi Google công bố đầu tư thêm **1,5 tỷ USD** vào một data center campus duy nhất tại **Jackson County, Alabama**, con số tỷ đô không phải là phần thú vị nhất. Phần thú vị nằm ở những gì nó đại diện: thêm một mục trong làn sóng vốn đang tái định nghĩa nơi đặt compute, cách các nền kinh tế khu vực hấp thụ nó, và ý nghĩa thực sự của "infrastructure" trong kỷ nguyên AI.
