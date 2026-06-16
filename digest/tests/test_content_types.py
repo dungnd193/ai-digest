@@ -13,6 +13,11 @@ def test_slugify_strips_non_ascii_punctuation():
     assert slugify("GPT-5: what's new?") == "gpt-5-what-s-new"
 
 
+def test_slugify_falls_back_when_empty():
+    assert slugify("!!!") == "post"
+    assert slugify("") == "post"
+
+
 def test_blogpost_holds_fields():
     p = BlogPost(
         lang="en", title="T", slug="t", date="2026-06-16", category="Tools",

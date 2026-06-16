@@ -5,10 +5,15 @@ from dataclasses import dataclass
 
 
 def slugify(title: str) -> str:
-    """URL-safe slug: lowercase, non-alphanumerics become single hyphens."""
+    """URL-safe ASCII slug: lowercase, non-alphanumerics become single hyphens.
+
+    Non-ASCII characters (e.g. Vietnamese diacritics) collapse to hyphens, so
+    callers needing a meaningful slug for non-ASCII titles should pass an
+    ASCII source. Falls back to ``"post"`` when nothing slug-able remains.
+    """
     s = title.lower()
     s = re.sub(r"[^a-z0-9]+", "-", s)
-    return s.strip("-")
+    return s.strip("-") or "post"
 
 
 @dataclass(frozen=True)

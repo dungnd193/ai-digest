@@ -52,6 +52,18 @@ def test_writer_strips_hugo_shortcodes():
     assert "{{%" not in posts[0].body
 
 
+def test_writer_strips_multiple_and_mixed_shortcodes():
+    router = MagicMock()
+    router.run.return_value = (
+        "A {{< a >}} B {{% b %}} C {{% /b %}} D {{< c >}} E"
+    )
+    posts = Writer(router).write(Digest(entries=(_entry(),)), date="2026-06-16")
+    assert "{{<" not in posts[0].body
+    assert "{{%" not in posts[0].body
+    assert ">}}" not in posts[0].body
+    assert "%}}" not in posts[0].body
+
+
 def test_writer_skips_entry_on_model_failure():
     router = MagicMock()
     router.run.side_effect = [Exception("down"), "Body."]

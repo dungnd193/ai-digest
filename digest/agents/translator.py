@@ -18,27 +18,50 @@ keep all Markdown and URLs unchanged. Return only the improved content.
 {draft}
 """
 
-_TITLE = """Translate this blog title to Vietnamese, keeping technical terms in
-English. Return only the translated title.
+_SHORT = """Translate this short blog {kind} to Vietnamese, keeping technical
+terms in English. Return only the translated text.
 
-{title}
+{text}
 """
 
 
 class Translator:
-    """Translates an English BlogPost to Vietnamese per the configured mode."""
+    """Translates an English BlogPost to Vietnamese per the configured mode.
+
+    The article *body* is translated according to ``mode``:
+      - ``gemma_only``     : 1 cheap call.
+      - ``claude_only``    : 1 smart call.
+      - ``draft_then_review`` (default): 1 cheap draft + 1 smart review.
+
+    The short metadata fields (``title`` and, if present, ``summary``) are each
+    translated with a single dedicated call — cheap for every mode except
+    ``claude_only`` (smart) — since they are too short to benefit from the
+    draft/review pass. Total calls therefore are:
+
+      | mode              | empty summary | non-empty summary |
+      |-------------------|---------------|-------------------|
+      | gemma_only        | 2 (body+title)| 3 (+summary)      |
+      | claude_only       | 2 (body+title)| 3 (+summary)      |
+      | draft_then_review | 3 (body x2+ti)| 4 (+summary)      |
+    """
 
     def __init__(self, router: Router, mode: str = "draft_then_review") -> None:
         self.router = router
         self.mode = mode
 
     def translate(self, post: BlogPost) -> BlogPost:
+        short_tier = "smart" if self.mode == "claude_only" else "cheap"
         body = self._translate_text(post.body)
         title = self.router.run(
-            _TITLE.format(title=post.title),
-            tier="smart" if self.mode == "claude_only" else "cheap",
+            _SHORT.format(kind="title", text=post.title), tier=short_tier
         ).strip()
-        summary = self._translate_text(post.summary) if post.summary else ""
+        summary = (
+            self.router.run(
+                _SHORT.format(kind="summary", text=post.summary), tier=short_tier
+            ).strip()
+            if post.summary
+            else ""
+        )
         return BlogPost(
             lang="vi",
             title=title,

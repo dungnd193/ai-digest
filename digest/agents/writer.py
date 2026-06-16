@@ -9,7 +9,16 @@ from digest.core.router import Router
 
 logger = logging.getLogger(__name__)
 
-_SHORTCODE_RE = re.compile(r"\{\{[<%].*?[%>]\}\}", re.DOTALL)
+_SHORTCODE_RE = re.compile(r"\{\{(?:<.*?>|%.*?%)\}\}", re.DOTALL)
+
+
+def _strip_shortcodes(text: str) -> str:
+    """Remove Hugo shortcodes, looping to handle nested occurrences."""
+    while True:
+        stripped = _SHORTCODE_RE.sub("", text)
+        if stripped == text:
+            return stripped
+        text = stripped
 
 _PROMPT = """Write an engaging technical blog article in English Markdown about
 the topic below, for readers who already know AI/tech. Use only standard
@@ -41,7 +50,7 @@ class Writer:
         raw = self.router.run(
             _PROMPT.format(title=entry.title, summary=entry.summary), tier="smart"
         )
-        body = _SHORTCODE_RE.sub("", raw).strip()
+        body = _strip_shortcodes(raw).strip()
         body += "\n\n## Sources\n" + "\n".join(f"- {u}" for u in entry.sources)
         return BlogPost(
             lang="en",
