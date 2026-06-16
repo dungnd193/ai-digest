@@ -31,3 +31,13 @@ def test_settings_get_returns_default_for_missing(tmp_path):
 def test_load_settings_missing_file_raises(tmp_path):
     with pytest.raises(FileNotFoundError):
         load_settings(tmp_path / "absent.yaml")
+
+
+def test_settings_is_copyable(tmp_path):
+    import copy
+    p = tmp_path / "s.yaml"
+    p.write_text("x: 1\n")
+    s = load_settings(p)
+    assert copy.copy(s).x == 1
+    import pickle
+    assert pickle.loads(pickle.dumps(s)).x == 1

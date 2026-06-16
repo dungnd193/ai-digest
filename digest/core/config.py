@@ -16,6 +16,8 @@ class Settings:
     _data: dict[str, Any] = field(default_factory=dict)
 
     def __getattr__(self, name: str) -> Any:
+        if name == "_data":
+            raise AttributeError(name)
         try:
             return self._data[name]
         except KeyError as exc:

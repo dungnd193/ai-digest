@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import time
 
-from digest.core.backends import Backend, BackendError
+from digest.core.backends import Backend, BackendError, ClaudeBackend, OllamaBackend
 
 CHEAP = "cheap"
 SMART = "smart"
@@ -24,6 +24,8 @@ class Router:
         retries: int = 2,
         backoff_base: float = 1.0,
     ) -> None:
+        if retries < 0:
+            raise ValueError(f"retries must be >= 0, got {retries!r}")
         self._backends = {CHEAP: cheap, SMART: smart}
         self.retries = retries
         self.backoff_base = backoff_base
@@ -41,7 +43,8 @@ class Router:
                 last_error = exc
                 if attempt < self.retries:
                     time.sleep(self.backoff_base * (2**attempt))
-        assert last_error is not None
+        if last_error is None:  # unreachable when retries >= 0
+            raise RuntimeError("router exhausted attempts without an error")
         raise last_error
 
 
@@ -51,8 +54,6 @@ def build_router() -> "Router":
     Reads OLLAMA_BASE_URL, OLLAMA_MODEL, CLAUDE_BIN. Call load_env() first
     if you need a .env file loaded into the environment.
     """
-    from digest.core.backends import ClaudeBackend, OllamaBackend
-
     cheap = OllamaBackend(
         base_url=os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434"),
         model=os.environ.get("OLLAMA_MODEL", "gemma3:4b"),

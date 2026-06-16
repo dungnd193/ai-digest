@@ -52,6 +52,23 @@ def test_router_raises_after_exhausting_retries():
     assert smart.generate.call_count == 3  # initial + 2 retries
 
 
+def test_router_rejects_negative_retries():
+    import pytest
+    from digest.core.backends import BackendError  # noqa
+    with pytest.raises(ValueError):
+        Router(cheap=_backend("c"), smart=_backend("s"), retries=-1)
+
+
+def test_router_retries_zero_single_attempt_then_raises():
+    from digest.core.backends import BackendError
+    smart = _backend(side_effect=BackendError("x"))
+    r = Router(cheap=_backend("c"), smart=smart, retries=0, backoff_base=0)
+    import pytest
+    with pytest.raises(BackendError):
+        r.run("t", tier="smart")
+    assert smart.generate.call_count == 1
+
+
 def test_build_router_constructs_from_env_and_settings(monkeypatch):
     monkeypatch.setenv("OLLAMA_BASE_URL", "http://localhost:11434")
     monkeypatch.setenv("OLLAMA_MODEL", "gemma3:4b")

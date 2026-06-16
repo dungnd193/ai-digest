@@ -73,3 +73,24 @@ def test_claude_generate_raises_backenderror_on_nonzero_exit():
         be = ClaudeBackend(claude_bin="claude", timeout=60)
         with pytest.raises(BackendError):
             be.generate("hi")
+
+
+def test_ollama_missing_response_key_raises_backenderror():
+    fake = MagicMock()
+    fake.raise_for_status.return_value = None
+    fake.json.return_value = {"error": "model not loaded"}
+    with patch("digest.core.backends.requests.post", return_value=fake):
+        be = OllamaBackend(base_url="http://x:11434", model="m")
+        with pytest.raises(BackendError):
+            be.generate("hi")
+
+
+def test_claude_empty_stdout_raises_backenderror():
+    completed = MagicMock()
+    completed.stdout = "   "
+    completed.stderr = "rate limited"
+    completed.returncode = 0
+    with patch("digest.core.backends.subprocess.run", return_value=completed):
+        be = ClaudeBackend(claude_bin="claude", timeout=60)
+        with pytest.raises(BackendError):
+            be.generate("hi")

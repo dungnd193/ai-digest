@@ -33,7 +33,12 @@ class OllamaBackend:
                 timeout=self.timeout,
             )
             resp.raise_for_status()
-            return resp.json()["response"]
+            body = resp.json()
+            if "response" not in body:
+                raise BackendError(f"Ollama response missing 'response' key: {body}")
+            return body["response"]
+        except BackendError:
+            raise
         except Exception as exc:  # noqa: BLE001 - normalize to BackendError
             raise BackendError(f"Ollama generate failed: {exc}") from exc
 
@@ -69,4 +74,9 @@ class ClaudeBackend:
             raise BackendError(
                 f"claude -p exited {completed.returncode}: {completed.stderr.strip()}"
             )
-        return completed.stdout.strip()
+        output = completed.stdout.strip()
+        if not output:
+            raise BackendError(
+                f"claude -p exited 0 but produced no output. stderr: {completed.stderr.strip()!r}"
+            )
+        return output
