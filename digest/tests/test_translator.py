@@ -63,6 +63,19 @@ def test_translator_title_prompt_demands_vietnamese():
     assert "Vietnamese" in title_prompt and "tiếng Việt" in title_prompt
 
 
+def test_translator_falls_back_to_smart_when_gemma_draft_empty():
+    # Gemma draft comes back empty -> must NOT review the empty string (which makes
+    # the smart model reply "no content"); translate the original via smart instead.
+    router = MagicMock()
+    long_body = "word " * 100  # ensure threshold is non-trivial
+    post = dataclasses.replace(_en_post(summary=""), body=long_body)
+    router.run.side_effect = ["", "smart full translation", "title-vi"]
+    out = Translator(router, mode="draft_then_review").translate(post)
+    assert out.body == "smart full translation"
+    tiers = [c.kwargs["tier"] for c in router.run.call_args_list]
+    assert tiers == ["cheap", "smart", "smart"]  # failed draft, smart fallback, title
+
+
 def test_translator_preserves_metadata():
     router = MagicMock()
     router.run.return_value = "vi body"

@@ -84,5 +84,9 @@ class Translator:
         draft = self.router.run(_DRAFT.format(body=text), tier="cheap").strip()
         if self.mode == "gemma_only":
             return draft
-        # draft_then_review
+        # draft_then_review: if the weak local model produced an empty/truncated
+        # draft, reviewing it makes the smart model reply "no content to improve".
+        # Fall back to a full smart translation of the original instead.
+        if len(draft) < max(20, int(len(text) * 0.2)):
+            return self.router.run(_DRAFT.format(body=text), tier="smart").strip()
         return self.router.run(_REVIEW.format(draft=draft), tier="smart").strip()
