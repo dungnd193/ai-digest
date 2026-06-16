@@ -27,19 +27,36 @@ def _safe(call, *args) -> None:
 
 
 def handle_update(update: dict, service: ApprovalService, telegram: TelegramClient) -> None:
-    """Process one Telegram callback_query update."""
+    """Process one Telegram callback_query update.
+
+    Removes the inline buttons immediately (editMessageText without a keyboard
+    clears it) and shows a loading state BEFORE the slow apply(), so a post
+    cannot be double-clicked and never lingers with stale buttons.
+    """
     cq = update.get("callback_query")
     if not cq:
         return
+    msg = cq.get("message")
+    mid = msg["message_id"] if msg else None
+
+    # toast on the button (best-effort; stale callbacks return 400)
+    _safe(telegram.answer_callback, cq["id"])
+
     try:
         action, key = decode_callback(cq.get("data", ""))
     except ValueError:
-        _safe(telegram.answer_callback, cq["id"], "Unknown action")
+        if mid is not None:
+            _safe(telegram.edit_message_text, mid, "Unknown action")
         return
+
+    # 1) clear buttons + show loading immediately -> blocks double-click
+    if mid is not None:
+        _safe(telegram.edit_message_text, mid, "⏳ Đang xử lý…")
+    # 2) do the slow work (commit/push)
     message = service.apply(action, key)
-    _safe(telegram.answer_callback, cq["id"], message)
-    if cq.get("message"):
-        _safe(telegram.edit_message_text, cq["message"]["message_id"], message)
+    # 3) final result, still no buttons
+    if mid is not None:
+        _safe(telegram.edit_message_text, mid, message)
 
 
 def build_service() -> tuple[ApprovalService, TelegramClient]:

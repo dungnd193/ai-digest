@@ -22,7 +22,7 @@ def test_approver_has_main_and_handle_update():
     assert hasattr(mod, "handle_update")
 
 
-def test_handle_update_applies_decision_and_acknowledges():
+def test_handle_update_clears_buttons_then_shows_loading_then_result():
     service = MagicMock(); service.apply.return_value = "✅ Published: T"
     tg = MagicMock()
     update = {
@@ -32,23 +32,27 @@ def test_handle_update_applies_decision_and_acknowledges():
     }
     handle_update(update, service, tg)
     service.apply.assert_called_once_with("pub", "2026-06-16:s")
-    tg.answer_callback.assert_called_once()
-    tg.edit_message_text.assert_called_once_with(55, "✅ Published: T")
+    # edited twice (no reply_markup arg -> Telegram clears the keyboard both times):
+    # first a loading state (before the slow apply), then the final result.
+    assert tg.edit_message_text.call_count == 2
+    assert tg.edit_message_text.call_args_list[0].args == (55, "⏳ Đang xử lý…")
+    assert tg.edit_message_text.call_args_list[1].args == (55, "✅ Published: T")
 
 
 def test_handle_update_ignores_non_callback_updates():
     service = MagicMock(); tg = MagicMock()
     handle_update({"update_id": 2}, service, tg)
     service.apply.assert_not_called()
-    tg.answer_callback.assert_not_called()
+    tg.edit_message_text.assert_not_called()
 
 
 def test_handle_update_handles_bad_callback_data_gracefully():
     service = MagicMock(); tg = MagicMock()
-    update = {"update_id": 3, "callback_query": {"id": "q2", "data": "garbage"}}
+    update = {"update_id": 3,
+              "callback_query": {"id": "q2", "data": "garbage", "message": {"message_id": 3}}}
     handle_update(update, service, tg)
     service.apply.assert_not_called()
-    tg.answer_callback.assert_called_once()
+    tg.edit_message_text.assert_called_once_with(3, "Unknown action")
 
 
 def test_handle_update_survives_stale_callback_400():
@@ -64,7 +68,7 @@ def test_handle_update_survives_stale_callback_400():
     }
     handle_update(update, service, tg)  # must not raise
     service.apply.assert_called_once_with("pub", "2026-06-16:s")
-    tg.edit_message_text.assert_called_once()  # still attempts the edit
+    assert tg.edit_message_text.call_count == 2  # loading + final, both still attempted
 
 
 def test_handle_update_survives_edit_failure():

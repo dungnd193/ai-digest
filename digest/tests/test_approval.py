@@ -69,3 +69,12 @@ def test_apply_discard_refuses_to_delete_outside_repo(tmp_path):
     assert outside.exists()  # path-traversal guard kept it
     assert store.get("k").state == "discarded"
     outside.unlink()
+
+
+def test_apply_is_idempotent_on_already_decided(tmp_path):
+    svc, store, publisher, seen, f = _service(tmp_path)
+    svc.apply("pub", "k")                       # publishes
+    publisher.commit_and_push.reset_mock()
+    msg = svc.apply("pub", "k")                 # double-click: already published
+    assert "Đã xử lý" in msg or "published" in msg.lower()
+    publisher.commit_and_push.assert_not_called()  # no re-commit

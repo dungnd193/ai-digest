@@ -46,6 +46,11 @@ class ApprovalService:
         if rec is None:
             return f"Unknown post: {key}"
 
+        # Idempotency: a double-click (or re-delivered callback) on an
+        # already-decided post must not re-publish / re-commit.
+        if rec.state != PostState.PENDING.value:
+            return f"Đã xử lý trước đó: {rec.title} ({rec.state})"
+
         if action == "pub":
             self.publisher.mark_published(rec.files)
             self.publisher.commit_and_push(f"post: {rec.title}", repo_dir=self.repo_dir)
