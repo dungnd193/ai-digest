@@ -19,7 +19,7 @@ summary: Google công bố các khoản đầu tư cộng đồng mới tại Vi
   đầu tư vào việc làm địa phương và năng lượng gần với hạ tầng của họ. Đây là một
   thông báo về quan hệ doanh nghiệp mang tính khu vực, với ý nghĩa kỹ thuật trực tiếp
   hạn chế.
-draft: true
+draft: false
 ---
 
 ## Khoản Đầu tư của Google tại Virginia, Nhìn qua Lăng kính Infrastructure

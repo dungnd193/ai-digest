@@ -17,7 +17,7 @@ summary: Google announced new community investments in Virginia centered on work
   energy. The move aligns with broader patterns of data-center operators investing
   in local jobs and energy near their infrastructure footprints. It is a regional
   corporate-affairs announcement with limited direct technical significance.
-draft: true
+draft: false
 ---
 
 ## Google's Virginia Investment, Read Through an Infrastructure Lens
