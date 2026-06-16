@@ -1,17 +1,19 @@
 {{ define "main" }}
-  <h1>{{ .Site.Title }}</h1>
+  <section class="hero">
+    <h1>{{ .Site.Title }}</h1>
+    <p>{{ with .Site.Params.description }}{{ . }}{{ else }}Daily AI &amp; tech digest.{{ end }}</p>
+  </section>
+
   {{ range .Site.RegularPages.GroupByDate "2006-01-02" }}
-    <section>
-      <h2>{{ .Key }}</h2>
-      <ul>
-        {{ range .Pages }}
-          <li>
-            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-            {{ with .Params.category }}<em>[{{ . }}]</em>{{ end }}
-            <p>{{ .Summary }}</p>
-          </li>
-        {{ end }}
-      </ul>
-    </section>
+    <div class="day">
+      <h2 class="day-label">{{ .Key }}</h2>
+      {{ range .Pages }}
+        <a class="card" href="{{ .RelPermalink }}">
+          {{ with .Params.category }}<span class="badge">{{ . }}</span>{{ end }}
+          <h3>{{ .Title }}</h3>
+          {{ with .Params.summary }}<p>{{ . | truncate 200 }}</p>{{ end }}
+        </a>
+      {{ end }}
+    </div>
   {{ end }}
 {{ end }}
