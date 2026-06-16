@@ -18,7 +18,7 @@ summary: AllenAI released olmo-eval, an evaluation workbench that standardizes h
   relevant to researchers and ML engineers building or adapting open models. While
   valuable to practitioners, its impact is concentrated within the model-development
   community.
-draft: true
+draft: false
 ---
 
 Evaluation is the part of the model development loop that everyone agrees matters and almost nobody treats as a first-class citizen. You train, you tweak, you fine-tune — and the real reckoning, the careful benchmark sweep, tends to get bolted on near the end, run by hand, against a moving target of scripts and config that nobody quite remembers the provenance of. AllenAI's **olmo-eval** is a direct response to that pattern: an evaluation workbench built to make benchmarking a continuous, reproducible part of how teams build and adapt language models, rather than a late-stage afterthought.

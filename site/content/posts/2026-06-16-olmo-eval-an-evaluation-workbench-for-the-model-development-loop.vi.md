@@ -18,7 +18,7 @@ summary: AllenAI đã phát hành olmo-eval, một evaluation workbench chuẩn 
   late-stage afterthought. Công cụ này phù hợp nhất với các researchers và ML engineers
   đang xây dựng hoặc điều chỉnh open models. Mặc dù hữu ích cho các practitioners,
   tác động của nó tập trung chủ yếu trong cộng đồng model-development.
-draft: true
+draft: false
 ---
 
 Evaluation là phần của vòng lặp phát triển mô hình mà ai cũng đồng ý là quan trọng, nhưng hầu như không ai đối xử với nó như một "first-class citizen". Bạn train, bạn tinh chỉnh, bạn fine-tune — còn việc đối soát thực tế, việc chạy benchmark một cách cẩn thận, thì thường bị gắn vào ở phút chót, làm thủ công, với một mục tiêu luôn dịch chuyển gồm những script và config mà không ai còn nhớ rõ nguồn gốc. **olmo-eval** của AllenAI là câu trả lời trực tiếp cho mô hình đó: một evaluation workbench được xây dựng để biến benchmarking thành một phần liên tục và có thể tái lập (reproducible) trong cách các đội ngũ xây dựng và thích ứng mô hình, thay vì là một bước phụ ở cuối quy trình.
