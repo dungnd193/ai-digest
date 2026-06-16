@@ -22,7 +22,7 @@ with Diagram(
     direction="LR",
     graph_attr=GRAPH_ATTR,
 ):
-    cron = Users("cron\n(daily)")
+    trigger = Users("daily.sh\n(you, each morning)")
     operator = Client("You\n(Telegram)")
 
     with Cluster("Sources"):
@@ -32,23 +32,21 @@ with Diagram(
     with Cluster("Ingestion"):
         collector = Python("Collector")
         discovery = Python("Discovery")
-        ingestor = Python("Ingestor")
+        ingestor = Python("Ingestor\n(dedupe vs seen)")
         rss >> collector
         tavily >> discovery
         [collector, discovery] >> ingestor
 
-    with Cluster("Model Router"):
+    with Cluster("Model Router  (model_mode: both | claude_only | ollama_only)"):
         router = Python("Router\n(cheap / smart)")
         gemma = Server("Gemma\n(Ollama, local)")
         claude = Server("Claude\n(claude -p)")
         router >> Edge(label="cheap") >> gemma
         router >> Edge(label="smart") >> claude
 
-    with Cluster("Processing  (cheap → Gemma)"):
+    with Cluster("Per-story pipeline  (timed per step)"):
         processor = Python("Processor")
         clusterer = Python("Clusterer")
-
-    with Cluster("Analysis & Content  (smart → Claude)"):
         analyst = Python("Lead Analyst")
         writer = Python("Writer (EN)")
         translator = Python("Translator (VI)")
@@ -57,6 +55,7 @@ with Diagram(
     with Cluster("State"):
         seen = Storage("seen.json")
         posts = Storage("posts.json")
+        runlog = Storage("runs/*.log\n(timings)")
 
     with Cluster("Publishing"):
         publisher = Python("Publisher")
@@ -64,25 +63,25 @@ with Diagram(
         gha = Github("GitHub Actions\n→ Pages (Hugo)")
         publisher >> git >> gha
 
-    with Cluster("Notify / Approval"):
-        reporter = Python("Reporter")
-        approver = Python("Approver\n(long-poll)")
+    reporter = Python("Reporter\n(daily report:\nper-post timings)")
 
-    # main pipeline flow
-    cron >> ingestor
+    # main flow
+    trigger >> ingestor
     ingestor >> processor >> clusterer >> analyst
-    analyst >> writer >> translator >> qgate >> publisher
+    analyst >> writer >> translator >> qgate
 
     # router used by processing + content agents
     [processor, clusterer] >> Edge(style="dotted") >> router
     [analyst, writer, translator, qgate] >> Edge(style="dotted") >> router
 
-    # idempotency + lifecycle state
+    # state
     ingestor >> Edge(style="dashed", label="filter") >> seen
-    publisher >> Edge(style="dashed") >> posts
+    qgate >> Edge(style="dashed") >> runlog
 
-    # human-in-the-loop approval
-    publisher >> Edge(label="drafts") >> reporter >> operator
-    operator >> Edge(label="✅/✏️/❌") >> approver
-    approver >> Edge(label="publish") >> git
-    approver >> posts
+    # publish: auto-publish (default) OR optional Telegram approval
+    qgate >> Edge(label="auto-publish\n(default)") >> publisher
+    qgate >> Edge(style="dashed", label="if approval_required") >> reporter
+    reporter >> operator
+    operator >> Edge(label="✅/✏️/❌") >> publisher
+    publisher >> posts
+    reporter >> Edge(style="dotted", label="summary") >> operator

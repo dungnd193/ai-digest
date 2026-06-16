@@ -51,4 +51,4 @@ docs/        # architecture, specs, plans, setup
 ## Status
 
 All pipeline milestones implemented and unit-tested (mocked, no live services):
-**129 tests green**. Core seam is the Model Router (`cheap`→Gemma / `smart`→Claude).
+**150 tests green**. Core seam is the Model Router (`cheap`→Gemma / `smart`→Claude).

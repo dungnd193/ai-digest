@@ -1,12 +1,12 @@
 digraph "AI Digest — Architecture" {
-	graph [bb="0,0,1948.1,1195.3",
+	graph [bb="0,0,2441.1,866.25",
 		bgcolor=white,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=16,
 		label="AI Digest — Architecture",
 		lheight=0.31,
-		lp="974.05,15.25",
+		lp="1220.6,15.25",
 		lwidth=2.57,
 		nodesep=0.60,
 		pad=2.0,
@@ -28,426 +28,404 @@ digraph "AI Digest — Architecture" {
 	];
 	edge [color="#7B8894"];
 	subgraph cluster_Sources {
-		graph [bb="8,206.3,124.8,593.3",
+		graph [bb="8,393.5,124.8,780.5",
 			bgcolor="#E5F5FD",
 			fontname="Sans-Serif",
 			fontsize=12,
 			label=Sources,
 			labeljust=l,
 			lheight=0.24,
-			lp="38.5,580.67",
+			lp="38.5,767.88",
 			lwidth=0.62,
 			pencolor="#AEB6BE",
 			rankdir=LR,
 			shape=box,
 			style=rounded
 		];
-		"21e8ec8b022d41749720577992604b13"	[height=1.9,
+		"8c76b4afd17b4411b715006c38205bfc"	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/onprem/compute/server.png",
 			label="RSS feeds",
-			pos="66.4,491.3",
+			pos="66.4,678.5",
 			shape=none];
-		"34c424b21b21439b9186af7ec44d0ec4"	[height=2.3,
+		"5b4994b7190d4f18aef478e8c5ac88e1"	[height=2.3,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/onprem/compute/server.png",
 			label="Tavily
 (web search)",
-			pos="66.4,297.3",
+			pos="66.4,484.5",
 			shape=none];
 	}
 	subgraph cluster_Ingestion {
-		graph [bb="163.8,231.3,436.4,589.3",
+		graph [bb="163.8,413.5,436.4,771.5",
 			bgcolor="#E5F5FD",
 			fontname="Sans-Serif",
 			fontsize=12,
 			label=Ingestion,
 			labeljust=l,
 			lheight=0.24,
-			lp="198.8,576.67",
+			lp="198.8,758.88",
 			lwidth=0.75,
 			pencolor="#AEB6BE",
 			rankdir=LR,
 			shape=box,
 			style=rounded
 		];
-		"5a87c8ceaf2c441f80868ffb8ceffc7b"	[height=1.9,
+		"4b89ed1ecfe54e3783ecc8dc32245331"	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
 			label=Collector,
-			pos="222.2,487.3",
+			pos="222.2,669.5",
 			shape=none];
-		ce7a8acaca9d4a188aaea57a6b49cc1b	[height=1.9,
+		"60f287c7afb44f198c64aafb39d33480"	[height=2.3,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
-			label=Ingestor,
-			pos="378,307.3",
+			label="Ingestor
+(dedupe vs seen)",
+			pos="378,504.5",
 			shape=none];
-		"5a87c8ceaf2c441f80868ffb8ceffc7b" -> ce7a8acaca9d4a188aaea57a6b49cc1b	[dir=forward,
+		"4b89ed1ecfe54e3783ecc8dc32245331" -> "60f287c7afb44f198c64aafb39d33480"	[dir=forward,
 			fontcolor="#2D3436",
 			fontname="Sans-Serif",
 			fontsize=13,
-			pos="e,327.85,364.82 272.29,429.85 287.62,411.91 304.65,391.97 320.45,373.48"];
-		"536b5f76a5d041e49714596d3cb104ab"	[height=1.9,
+			pos="e,327.85,557.23 272.29,616.84 287.55,600.47 304.5,582.28 320.24,565.4"];
+		"76e1e810a1bb43b693911c6db201ebca"	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
 			label=Discovery,
-			pos="222.2,307.3",
+			pos="222.2,489.5",
 			shape=none];
-		"536b5f76a5d041e49714596d3cb104ab" -> ce7a8acaca9d4a188aaea57a6b49cc1b	[dir=forward,
+		"76e1e810a1bb43b693911c6db201ebca" -> "60f287c7afb44f198c64aafb39d33480"	[dir=forward,
 			fontcolor="#2D3436",
 			fontname="Sans-Serif",
 			fontsize=13,
-			pos="e,327.85,307.3 272.29,307.3 286.3,307.3 301.73,307.3 316.35,307.3"];
+			pos="e,327.85,499.71 272.29,494.29 286.44,495.67 302.04,497.19 316.78,498.63"];
 	}
-	subgraph "cluster_Model Router" {
-		graph [bb="1467.7,771.3,1784.3,1187.3",
+	subgraph "cluster_Model Router  (model_mode: both | claude_only | ollama_only)" {
+		graph [bb="1533.7,399.5,1908.2,815.5",
 			bgcolor="#E5F5FD",
 			fontname="Sans-Serif",
 			fontsize=12,
-			label="Model Router",
+			label="Model Router  (model_mode: both | claude_only | ollama_only)",
 			labeljust=l,
 			lheight=0.24,
-			lp="1514.7,1174.7",
-			lwidth=1.08,
+			lp="1721,802.88",
+			lwidth=4.98,
 			pencolor="#AEB6BE",
 			rankdir=LR,
 			shape=box,
 			style=rounded
 		];
-		"42a497d2c4244198955181acc43c9bef"	[height=2.3,
+		"03e65be6bde141b4bb10908ae35ed047"	[height=2.3,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
 			label="Router
 (cheap / smart)",
-			pos="1526.1,889.3",
+			pos="1604.4,523.5",
 			shape=none];
-		b8b6b2cfb24b42af9f9177c3f1758304	[height=2.3,
+		ddc4305f19a548feaffd093b4d8b230e	[height=2.3,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/onprem/compute/server.png",
 			label="Gemma
 (Ollama, local)",
-			pos="1725.9,862.3",
+			pos="1836.5,490.5",
 			shape=none];
-		"42a497d2c4244198955181acc43c9bef" -> b8b6b2cfb24b42af9f9177c3f1758304	[dir=forward,
+		"03e65be6bde141b4bb10908ae35ed047" -> ddc4305f19a548feaffd093b4d8b230e	[dir=forward,
 			fontcolor="#2D3436",
 			fontname="Sans-Serif",
 			fontsize=13,
 			label=cheap,
-			lp="1626,887.59",
-			pos="e,1675.7,869.02 1576.2,882.59 1602.9,878.95 1636.1,874.43 1664.3,870.57"];
-		d9327f31510941fba9b30f6195f30ee9	[height=2.3,
+			lp="1720.5,521.26",
+			pos="e,1786.2,497.57 1654.8,516.42 1690,511.37 1737.5,504.56 1774.9,499.19"];
+		"98e6a1b665a84c3ebe87403e6724ec31"	[height=2.3,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/onprem/compute/server.png",
 			label="Claude
 (claude -p)",
-			pos="1725.9,1071.3",
+			pos="1836.5,699.5",
 			shape=none];
-		"42a497d2c4244198955181acc43c9bef" -> d9327f31510941fba9b30f6195f30ee9	[dir=forward,
+		"03e65be6bde141b4bb10908ae35ed047" -> "98e6a1b665a84c3ebe87403e6724ec31"	[dir=forward,
 			fontcolor="#2D3436",
 			fontname="Sans-Serif",
 			fontsize=13,
 			label=smart,
-			lp="1626,1006",
-			pos="e,1675.7,1026 1576.2,934.52 1603.8,959.91 1638.4,991.74 1667.3,1018.3"];
+			lp="1720.5,646.92",
+			pos="e,1786.2,661.81 1654.8,561.26 1690.7,588.75 1739.5,626.08 1777.3,655.02"];
 	}
-	subgraph "cluster_Processing  (cheap → Gemma)" {
-		graph [bb="475.4,683.3,748,862.3",
+	subgraph "cluster_Per-story pipeline  (timed per step)" {
+		graph [bb="475.4,267.5,1371.2,445.5",
 			bgcolor="#E5F5FD",
 			fontname="Sans-Serif",
 			fontsize=12,
-			label="Processing  (cheap → Gemma)",
+			label="Per-story pipeline  (timed per step)",
 			labeljust=l,
-			lheight=0.26,
-			lp="568.9,848.92",
-			lwidth=2.38,
+			lheight=0.24,
+			lp="582.03,432.88",
+			lwidth=2.74,
 			pencolor="#AEB6BE",
 			rankdir=LR,
 			shape=box,
 			style=rounded
 		];
-		"13482abdd398486184b7156da69ef01d"	[height=1.9,
+		e019db7b83ca4e5b80865ab0d83ecc22	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
 			label=Processor,
-			pos="533.8,759.3",
+			pos="533.8,343.5",
 			shape=none];
-		aee1cc75d1514f2e9669b5f4c25f6350	[height=1.9,
+		"37bd26c9735148df80a047ece1a825d0"	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
 			label=Clusterer,
-			pos="689.6,759.3",
+			pos="689.6,343.5",
 			shape=none];
-		"13482abdd398486184b7156da69ef01d" -> aee1cc75d1514f2e9669b5f4c25f6350	[dir=forward,
+		e019db7b83ca4e5b80865ab0d83ecc22 -> "37bd26c9735148df80a047ece1a825d0"	[dir=forward,
 			fontcolor="#2D3436",
 			fontname="Sans-Serif",
 			fontsize=13,
-			pos="e,639.45,759.3 583.89,759.3 597.9,759.3 613.33,759.3 627.95,759.3"];
-	}
-	subgraph "cluster_Analysis & Content  (smart → Claude)" {
-		graph [bb="787,509.3,1371.2,688.3",
-			bgcolor="#E5F5FD",
-			fontname="Sans-Serif",
-			fontsize=12,
-			label="Analysis & Content  (smart → Claude)",
-			labeljust=l,
-			lheight=0.26,
-			lp="899.25,674.92",
-			lwidth=2.90,
-			pencolor="#AEB6BE",
-			rankdir=LR,
-			shape=box,
-			style=rounded
-		];
-		d881a47a1b7d4671988fb27951e9f5c1	[height=1.9,
+			pos="e,639.45,343.5 583.89,343.5 597.9,343.5 613.33,343.5 627.95,343.5"];
+		b558b51108b44403acb222a19ae957f6	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
 			label="Lead Analyst",
-			pos="845.4,585.3",
+			pos="845.4,343.5",
 			shape=none];
-		"879c9e7fa6d44a16af67e02267d512ba"	[height=1.9,
+		"37bd26c9735148df80a047ece1a825d0" -> b558b51108b44403acb222a19ae957f6	[dir=forward,
+			fontcolor="#2D3436",
+			fontname="Sans-Serif",
+			fontsize=13,
+			pos="e,795.25,343.5 739.69,343.5 753.7,343.5 769.13,343.5 783.75,343.5"];
+		d8ce259cc796456e9633d369cddf7e18	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
 			label="Writer (EN)",
-			pos="1001.2,585.3",
+			pos="1001.2,343.5",
 			shape=none];
-		d881a47a1b7d4671988fb27951e9f5c1 -> "879c9e7fa6d44a16af67e02267d512ba"	[dir=forward,
+		b558b51108b44403acb222a19ae957f6 -> d8ce259cc796456e9633d369cddf7e18	[dir=forward,
 			fontcolor="#2D3436",
 			fontname="Sans-Serif",
 			fontsize=13,
-			pos="e,951.05,585.3 895.49,585.3 909.5,585.3 924.93,585.3 939.55,585.3"];
-		"058629d2e5ba4d53be38d67f0f30003e"	[height=1.9,
+			pos="e,951.05,343.5 895.49,343.5 909.5,343.5 924.93,343.5 939.55,343.5"];
+		ee2aa4688c7d4797a4619677aaa8fe3d	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
 			label="Translator (VI)",
-			pos="1157,585.3",
+			pos="1157,343.5",
 			shape=none];
-		"879c9e7fa6d44a16af67e02267d512ba" -> "058629d2e5ba4d53be38d67f0f30003e"	[dir=forward,
+		d8ce259cc796456e9633d369cddf7e18 -> ee2aa4688c7d4797a4619677aaa8fe3d	[dir=forward,
 			fontcolor="#2D3436",
 			fontname="Sans-Serif",
 			fontsize=13,
-			pos="e,1106.9,585.3 1051.3,585.3 1065.3,585.3 1080.7,585.3 1095.4,585.3"];
-		a347b5579be745f4bc1a535946f40916	[height=1.9,
+			pos="e,1106.9,343.5 1051.3,343.5 1065.3,343.5 1080.7,343.5 1095.4,343.5"];
+		"84c8d43d57d945caba6534383f16f11e"	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
 			label="Quality Gate",
-			pos="1312.8,585.3",
+			pos="1312.8,343.5",
 			shape=none];
-		"058629d2e5ba4d53be38d67f0f30003e" -> a347b5579be745f4bc1a535946f40916	[dir=forward,
+		ee2aa4688c7d4797a4619677aaa8fe3d -> "84c8d43d57d945caba6534383f16f11e"	[dir=forward,
 			fontcolor="#2D3436",
 			fontname="Sans-Serif",
 			fontsize=13,
-			pos="e,1262.7,585.3 1207.1,585.3 1221.1,585.3 1236.5,585.3 1251.2,585.3"];
+			pos="e,1262.7,343.5 1207.1,343.5 1221.1,343.5 1236.5,343.5 1251.2,343.5"];
 	}
 	subgraph cluster_State {
-		graph [bb="1667.5,141.3,1784.3,499.3",
+		graph [bb="2160.5,253.5,2277.3,819.5",
 			bgcolor="#E5F5FD",
 			fontname="Sans-Serif",
 			fontsize=12,
 			label=State,
 			labeljust=l,
 			lheight=0.24,
-			lp="1690.1,486.68",
+			lp="2183.1,806.88",
 			lwidth=0.41,
 			pencolor="#AEB6BE",
 			rankdir=LR,
 			shape=box,
 			style=rounded
 		];
-		"2ebaa07431694af5affde60004ccde2c"	[height=1.9,
+		"46937199b470403399fea26cf5e63e6b"	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/generic/storage/storage.png",
 			label="seen.json",
-			pos="1725.9,217.3",
+			pos="2218.9,717.5",
 			shape=none];
-		d06aa029a2b04f4d987bd52ffbfe1665	[height=1.9,
+		"0437bf68f40d4a459ed9a27c4ce758ec"	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/generic/storage/storage.png",
 			label="posts.json",
-			pos="1725.9,397.3",
+			pos="2218.9,329.5",
+			shape=none];
+		c14e91d1929d41b3aaaee3497bb0ea1e	[height=2.3,
+			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/generic/storage/storage.png",
+			label="runs/*.log
+(timings)",
+			pos="2218.9,523.5",
 			shape=none];
 	}
 	subgraph cluster_Publishing {
-		graph [bb="1467.7,521.3,1940.1,728.3",
+		graph [bb="2004.7,38.5,2433.1,245.5",
 			bgcolor="#E5F5FD",
 			fontname="Sans-Serif",
 			fontsize=12,
 			label=Publishing,
 			labeljust=l,
 			lheight=0.24,
-			lp="1505.7,715.67",
+			lp="2042.7,232.88",
 			lwidth=0.83,
 			pencolor="#AEB6BE",
 			rankdir=LR,
 			shape=box,
 			style=rounded
 		];
-		d8ffdee862044fc8a62f1716ddeb04e4	[height=1.9,
+		"1119690087b34fa09ff2ff783c383f9b"	[height=1.9,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
 			label=Publisher,
-			pos="1526.1,597.3",
+			pos="2063.1,139.5",
 			shape=none];
-		"1542ba3a34684d3cab3e08a8bcd6d87c"	[height=2.3,
+		"6e20d077ed1548f2abd6132bc11f1805"	[height=2.3,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/onprem/vcs/git.png",
 			label="git repo
 (mono-repo)",
-			pos="1725.9,612.3",
+			pos="2218.9,129.5",
 			shape=none];
-		d8ffdee862044fc8a62f1716ddeb04e4 -> "1542ba3a34684d3cab3e08a8bcd6d87c"	[dir=forward,
+		"1119690087b34fa09ff2ff783c383f9b" -> "6e20d077ed1548f2abd6132bc11f1805"	[dir=forward,
 			fontcolor="#2D3436",
 			fontname="Sans-Serif",
 			fontsize=13,
-			pos="e,1675.7,608.57 1576.2,601.03 1602.9,603.05 1636.1,605.56 1664.3,607.7"];
-		fcfa9a9fb576401faa2148e52c68bdc9	[height=2.3,
+			pos="e,2168.8,132.7 2113.2,136.31 2127.3,135.39 2142.9,134.37 2157.7,133.42"];
+		"1ecc4ef5ee234e7e8a7873cbef8dbd24"	[height=2.3,
 			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/onprem/vcs/github.png",
 			label="GitHub Actions
 → Pages (Hugo)",
-			pos="1881.7,612.3",
+			pos="2374.7,129.5",
 			shape=none];
-		"1542ba3a34684d3cab3e08a8bcd6d87c" -> fcfa9a9fb576401faa2148e52c68bdc9	[dir=forward,
+		"6e20d077ed1548f2abd6132bc11f1805" -> "1ecc4ef5ee234e7e8a7873cbef8dbd24"	[dir=forward,
 			fontcolor="#2D3436",
 			fontname="Sans-Serif",
 			fontsize=13,
-			pos="e,1831.6,612.3 1776,612.3 1790,612.3 1805.4,612.3 1820.1,612.3"];
+			pos="e,2324.6,129.5 2269,129.5 2283,129.5 2298.4,129.5 2313.1,129.5"];
 	}
-	subgraph "cluster_Notify / Approval" {
-		graph [bb="1467.7,127.3,1584.5,513.3",
-			bgcolor="#E5F5FD",
-			fontname="Sans-Serif",
-			fontsize=12,
-			label="Notify / Approval",
-			labeljust=l,
-			lheight=0.24,
-			lp="1523,500.68",
-			lwidth=1.31,
-			pencolor="#AEB6BE",
-			rankdir=LR,
-			shape=box,
-			style=rounded
-		];
-		c4923dc084694482827441ed0a51daa3	[height=1.9,
-			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
-			label=Reporter,
-			pos="1526.1,203.3",
-			shape=none];
-		"84c1d8f40fb54562b8b7237363cd734f"	[height=2.3,
-			image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
-			label="Approver
-(long-poll)",
-			pos="1526.1,397.3",
-			shape=none];
-	}
-	"0a79c8eff86d4da88f3ba57e7685b25e"	[height=2.3,
+	"1c9d6c7778f34579bf9d3269c4ccd3c4"	[height=2.3,
 		image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/onprem/client/users.png",
-		label="cron
-(daily)",
-		pos="222.2,113.3",
+		label="daily.sh
+(you, each morning)",
+		pos="222.2,295.5",
 		shape=none];
-	"0a79c8eff86d4da88f3ba57e7685b25e" -> ce7a8acaca9d4a188aaea57a6b49cc1b	[dir=forward,
+	"1c9d6c7778f34579bf9d3269c4ccd3c4" -> "60f287c7afb44f198c64aafb39d33480"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,327.72,245.14 272.5,175.48 287.81,194.8 304.81,216.24 320.57,236.12"];
-	"7d74a18c6a0741d88e1bd9d51500956f"	[height=2.3,
+		pos="e,327.72,437.53 272.5,362.49 287.95,383.49 305.12,406.82 321,428.4"];
+	b987f67051064eae918f95ba9da071f9	[height=2.3,
 		image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/onprem/client/client.png",
 		label="You
 (Telegram)",
-		pos="1312.8,347.3",
+		pos="1836.5,158.5",
 		shape=none];
-	"7d74a18c6a0741d88e1bd9d51500956f" -> "84c1d8f40fb54562b8b7237363cd734f"	[dir=forward,
+	b987f67051064eae918f95ba9da071f9 -> "1119690087b34fa09ff2ff783c383f9b"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
 		label="✅/✏️/❌",
-		lp="1419.5,387.62",
-		pos="e,1475.7,385.62 1363.1,358.96 1393.4,366.14 1432.5,375.39 1464.7,383"];
-	"21e8ec8b022d41749720577992604b13" -> "5a87c8ceaf2c441f80868ffb8ceffc7b"	[dir=forward,
+		lp="1956.5,160.08",
+		pos="e,2012.9,143.66 1886.8,154.33 1920.6,151.47 1965.6,147.66 2001.6,144.62"];
+	"8c76b4afd17b4411b715006c38205bfc" -> "4b89ed1ecfe54e3783ecc8dc32245331"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,172.05,488.58 116.49,490.02 130.5,489.66 145.93,489.26 160.55,488.88"];
-	"34c424b21b21439b9186af7ec44d0ec4" -> "536b5f76a5d041e49714596d3cb104ab"	[dir=forward,
+		pos="e,172.05,672.38 116.49,675.63 130.64,674.8 146.24,673.89 160.98,673.02"];
+	"5b4994b7190d4f18aef478e8c5ac88e1" -> "76e1e810a1bb43b693911c6db201ebca"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,172.05,304.1 116.49,300.49 130.64,301.41 146.24,302.43 160.98,303.38"];
-	ce7a8acaca9d4a188aaea57a6b49cc1b -> "13482abdd398486184b7156da69ef01d"	[dir=forward,
+		pos="e,172.05,487.9 116.49,486.1 130.5,486.55 145.93,487.05 160.55,487.53"];
+	"60f287c7afb44f198c64aafb39d33480" -> e019db7b83ca4e5b80865ab0d83ecc22	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,509.55,690.96 402.19,375.46 430,457.17 476.51,593.87 505.87,680.17"];
-	ce7a8acaca9d4a188aaea57a6b49cc1b -> "2ebaa07431694af5affde60004ccde2c"	[dir=forward,
+		pos="e,483.65,394.95 428.09,453.12 443.35,437.14 460.3,419.4 476.04,402.92"];
+	"60f287c7afb44f198c64aafb39d33480" -> "46937199b470403399fea26cf5e63e6b"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
 		label=filter,
-		lp="1001.2,79.675",
-		pos="e,1675.6,152.82 392.72,239.07 411.25,169.05 451.74,70.3 532.8,70.3 532.8,70.3 532.8,70.3 1527.1,70.3 1582.2,70.3 1631.9,107.49 1667.7,\
-144.46",
+		lp="1157,856.88",
+		pos="e,2172,785.55 381.25,587.09 388.92,688.59 419.08,847.5 532.8,847.5 532.8,847.5 532.8,847.5 2064.1,847.5 2103.6,847.5 2138.1,822.23 \
+2164.4,793.98",
 		style=dashed];
-	"13482abdd398486184b7156da69ef01d" -> "42a497d2c4244198955181acc43c9bef"	[dir=forward,
+	e019db7b83ca4e5b80865ab0d83ecc22 -> "03e65be6bde141b4bb10908ae35ed047"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,1475.7,965.13 539.38,827.43 549.58,917.88 582.49,1066.3 688.6,1066.3 688.6,1066.3 688.6,1066.3 1313.8,1066.3 1376.9,1066.3 1431,\
-1019.4 1468.7,973.9",
+		pos="e,1554.1,603.08 546.89,411.68 568.85,524.45 619.48,737.5 688.6,737.5 688.6,737.5 688.6,737.5 1313.8,737.5 1412.2,737.5 1438.6,706.81 \
+1514.7,644.5 1526.3,635.01 1537.2,623.67 1547,611.8",
 		style=dotted];
-	aee1cc75d1514f2e9669b5f4c25f6350 -> "42a497d2c4244198955181acc43c9bef"	[dir=forward,
+	"37bd26c9735148df80a047ece1a825d0" -> "03e65be6bde141b4bb10908ae35ed047"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,1475.9,923.58 707.33,827.4 727.75,892.01 769.25,979.3 844.4,979.3 844.4,979.3 844.4,979.3 1313.8,979.3 1368.5,979.3 1425.3,953.45 \
-1466.2,929.46",
+		pos="e,1569.7,440.85 734.89,275.44 761.97,242.72 799.92,210.5 844.4,210.5 844.4,210.5 844.4,210.5 1313.8,210.5 1434.9,210.5 1519.5,338.36 \
+1564.8,430.63",
 		style=dotted];
-	aee1cc75d1514f2e9669b5f4c25f6350 -> d881a47a1b7d4671988fb27951e9f5c1	[dir=forward,
+	b558b51108b44403acb222a19ae957f6 -> "03e65be6bde141b4bb10908ae35ed047"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,795.25,640.9 739.69,703.77 754.95,686.5 771.9,667.33 787.64,649.52"];
-	d881a47a1b7d4671988fb27951e9f5c1 -> "42a497d2c4244198955181acc43c9bef"	[dir=forward,
-		fontcolor="#2D3436",
-		fontname="Sans-Serif",
-		fontsize=13,
-		pos="e,1476,890.39 850.98,653.43 861.18,743.88 894.09,892.3 1000.2,892.3 1000.2,892.3 1000.2,892.3 1313.8,892.3 1364.6,892.3 1422.3,891.42 \
-1464.5,890.62",
+		pos="e,1554.2,560.06 850.98,411.63 861.18,502.08 894.09,650.5 1000.2,650.5 1000.2,650.5 1000.2,650.5 1313.8,650.5 1399.6,650.5 1488.5,\
+603.21 1544.8,566.35",
 		style=dotted];
-	"879c9e7fa6d44a16af67e02267d512ba" -> "42a497d2c4244198955181acc43c9bef"	[dir=forward,
+	d8ce259cc796456e9633d369cddf7e18 -> "03e65be6bde141b4bb10908ae35ed047"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,1475.9,868.77 1051.5,632.03 1068.3,646.78 1087.6,662.55 1106.6,675.3 1226.9,756.23 1381.9,827.93 1465.4,864.21",
+		pos="e,1554.4,530.03 1051.6,392.75 1068.1,407.32 1087.2,422.33 1106.6,433.5 1221.9,499.91 1258.8,508.46 1390.2,529.5 1441.3,537.68 1500.1,\
+535.14 1543,531.15",
 		style=dotted];
-	"058629d2e5ba4d53be38d67f0f30003e" -> "42a497d2c4244198955181acc43c9bef"	[dir=forward,
+	ee2aa4688c7d4797a4619677aaa8fe3d -> "03e65be6bde141b4bb10908ae35ed047"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,1478.2,806.52 1207.4,631.9 1224.2,646.65 1243.5,662.44 1262.4,675.3 1339.7,727.96 1379.4,710.47 1448.7,773.3 1456.7,780.59 1464.3,\
-788.9 1471.3,797.64",
+		pos="e,1554.3,517.63 1207.4,394.12 1223.8,408.57 1242.8,423.19 1262.4,433.5 1353.6,481.54 1472.4,505.32 1543,515.97",
 		style=dotted];
-	a347b5579be745f4bc1a535946f40916 -> "42a497d2c4244198955181acc43c9bef"	[dir=forward,
+	"84c8d43d57d945caba6534383f16f11e" -> "03e65be6bde141b4bb10908ae35ed047"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,1493.5,806.69 1363.2,612.43 1391.6,630.21 1426,655.78 1448.7,686.3 1463.4,706.05 1459.1,715.24 1467.7,738.3 1474.7,757.04 1482.2,\
-777.05 1489.5,796.17",
+		pos="e,1554.2,475.56 1362.9,363.82 1404.8,382.19 1465.9,411.38 1514.7,444.5 1525.1,451.58 1535.6,459.78 1545.6,468.17",
 		style=dotted];
-	a347b5579be745f4bc1a535946f40916 -> d8ffdee862044fc8a62f1716ddeb04e4	[dir=forward,
+	"84c8d43d57d945caba6534383f16f11e" -> c14e91d1929d41b3aaaee3497bb0ea1e	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,1475.7,594.5 1363.1,588.1 1393.3,589.81 1432.1,592.02 1464.3,593.84"];
-	d8ffdee862044fc8a62f1716ddeb04e4 -> d06aa029a2b04f4d987bd52ffbfe1665	[dir=forward,
-		fontcolor="#2D3436",
-		fontname="Sans-Serif",
-		fontsize=13,
-		pos="e,1692,465.62 1576.4,574.74 1600.1,562.22 1627.8,544.99 1648.5,524.3 1662.8,510.02 1675.5,492.57 1686.2,475.22",
+		pos="e,2168.7,444.37 1363,343.23 1420.6,342.93 1519,342.5 1603.4,342.5 1603.4,342.5 1603.4,342.5 2064.1,342.5 2090.9,342.5 2130,389.04 \
+2162.1,434.92",
 		style=dashed];
-	d8ffdee862044fc8a62f1716ddeb04e4 -> c4923dc084694482827441ed0a51daa3	[dir=forward,
+	"84c8d43d57d945caba6534383f16f11e" -> "1119690087b34fa09ff2ff783c383f9b"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		label=drafts,
-		lp="1419.5,424.3",
-		pos="e,1475.8,258.86 1475.8,540.88 1453.1,511.25 1429.2,472.98 1419.2,433.68 1404.3,374.89 1436.3,312.78 1469.1,267.88"];
-	c4923dc084694482827441ed0a51daa3 -> "7d74a18c6a0741d88e1bd9d51500956f"	[dir=forward,
+		label="auto-publish
+(default)",
+		lp="1720.5,56.433",
+		pos="e,2012.8,103.93 1341.4,275.35 1374.8,203.75 1438.6,95.785 1533.7,53.5 1566.8,38.785 1795.7,25.263 1908.2,54.5 1941.8,63.223 1975.8,\
+80.943 2003.4,97.957"];
+	e5c2e598b53a4d5c989c90cb9f5c82e5	[height=2.7,
+		image="/home/dungnd/Desktop/Workspace/ai-digest/.venv/lib/python3.14/site-packages/resources/programming/language/python.png",
+		label="Reporter
+(daily report:
+per-post timings)",
+		pos="1604.4,172.5",
+		shape=none];
+	"84c8d43d57d945caba6534383f16f11e" -> e5c2e598b53a4d5c989c90cb9f5c82e5	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,1363.1,313.72 1475.7,236.93 1444.9,257.97 1404.9,285.18 1372.5,307.32"];
-	"84c1d8f40fb54562b8b7237363cd734f" -> d06aa029a2b04f4d987bd52ffbfe1665	[dir=forward,
+		label="if approval_required",
+		lp="1452.5,301.12",
+		pos="e,1554,198.57 1363.1,309.19 1372,303.24 1381.3,297.22 1390.2,291.75 1441.2,260.32 1500.8,227.28 1544,203.98",
+		style=dashed];
+	"1119690087b34fa09ff2ff783c383f9b" -> "0437bf68f40d4a459ed9a27c4ce758ec"	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		pos="e,1675.7,397.3 1576.2,397.3 1602.9,397.3 1636.1,397.3 1664.3,397.3"];
-	"84c1d8f40fb54562b8b7237363cd734f" -> "1542ba3a34684d3cab3e08a8bcd6d87c"	[dir=forward,
+		pos="e,2168.6,268.62 2113.4,200.4 2128.7,219.32 2145.7,240.32 2161.5,259.79"];
+	e5c2e598b53a4d5c989c90cb9f5c82e5 -> b987f67051064eae918f95ba9da071f9	[dir=forward,
 		fontcolor="#2D3436",
 		fontname="Sans-Serif",
 		fontsize=13,
-		label=publish,
-		lp="1626,533.43",
-		pos="e,1675.7,558.78 1576.2,450.72 1604.1,480.98 1639,518.96 1668,550.49"];
+		pos="e,1786.2,161.5 1654.8,169.5 1690,167.36 1737.5,164.47 1774.9,162.18"];
+	e5c2e598b53a4d5c989c90cb9f5c82e5 -> b987f67051064eae918f95ba9da071f9	[dir=forward,
+		fontcolor="#2D3436",
+		fontname="Sans-Serif",
+		fontsize=13,
+		label=summary,
+		lp="1720.5,144.12",
+		pos="e,1786.3,140.83 1654.7,144.1 1663.5,140.23 1672.7,136.87 1681.8,134.75 1715.3,126.94 1725.1,129.6 1759.1,134.75 1764.4,135.55 1769.8,\
+136.66 1775.2,137.95",
+		style=dotted];
 }
