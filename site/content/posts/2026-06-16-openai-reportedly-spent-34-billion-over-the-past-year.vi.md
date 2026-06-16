@@ -23,7 +23,7 @@ summary: Một báo cáo cho biết OpenAI đã chi tiêu hết 34 tỷ USD tron
   bao gồm compute, nhân tài và hạ tầng. Mức chi tiêu như vậy làm gia tăng sự giám
   sát đối với tính kinh tế và khả năng bền vững của các lab hàng đầu. Nếu chính xác,
   đây là một tín hiệu đáng chú ý về áp lực chi phí và nhu cầu vốn trên toàn ngành.
-draft: true
+draft: false
 ---
 
 # Năm 34 Tỷ Đô Được Báo Cáo của OpenAI: Chi Tiêu Quy Mô Frontier Nói Lên Điều Gì

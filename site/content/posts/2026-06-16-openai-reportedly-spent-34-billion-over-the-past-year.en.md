@@ -17,7 +17,7 @@ summary: A report claims OpenAI burned through $34 billion in the past year, a d
   Such spend levels intensify scrutiny of the economics and sustainability of the
   leading labs. If accurate, it is a meaningful signal about industry-wide cost pressures
   and funding needs.
-draft: true
+draft: false
 ---
 
 # OpenAI's Reported $34 Billion Year: What Frontier-Scale Spending Tells Us
