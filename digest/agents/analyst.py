@@ -32,10 +32,12 @@ class Analyst:
         raw = self.router.run(_PROMPT.format(listing=listing), tier="smart")
         try:
             data = extract_json(raw)
-            entries = tuple(self._entry(obj) for obj in data)
+            if not isinstance(data, list):
+                raise TypeError("expected a JSON array of entries")
+            entries = tuple(self._entry(obj) for obj in data if isinstance(obj, dict))
             if entries:
                 return Digest(entries=entries)
-        except (JSONExtractError, ValueError, TypeError, KeyError) as exc:
+        except (JSONExtractError, ValueError, TypeError, KeyError, AttributeError) as exc:
             logger.warning("analyst parse failed, using fallback digest: %s", exc)
         return Digest(entries=tuple(self._fallback(c) for c in clusters))
 

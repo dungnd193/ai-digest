@@ -45,3 +45,25 @@ def test_analyst_falls_back_on_unparseable_output():
     assert digest.entries[0].title == "Story A"
     assert digest.entries[0].sources == ("https://a.com",)
     assert 1 <= digest.entries[0].importance <= 5
+
+
+def test_analyst_falls_back_when_model_returns_object_not_array():
+    # Model returns a JSON object instead of an array -> must not crash, must fall back.
+    clusters = [_cluster("Story A", "https://a.com")]
+    router = MagicMock()
+    router.run.return_value = json.dumps({"title": "Story A", "summary": "x"})
+    digest = Analyst(router).analyze(clusters)
+    assert len(digest.entries) == 1
+    assert digest.entries[0].title == "Story A"
+
+
+def test_analyst_skips_non_dict_items_in_array():
+    # Array containing junk (strings) plus one valid object.
+    clusters = [_cluster("Story A", "https://a.com")]
+    router = MagicMock()
+    router.run.return_value = json.dumps(
+        ["garbage", {"title": "Real", "summary": "s", "importance": 4,
+                     "sources": ["https://a.com"], "tags": []}]
+    )
+    digest = Analyst(router).analyze(clusters)
+    assert [e.title for e in digest.entries] == ["Real"]
