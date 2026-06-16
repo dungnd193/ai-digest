@@ -20,7 +20,7 @@ summary: A community developer released Qwable-v1, an open-weights Qwen3.6-35B-A
   These are unverified community claims sourced from Reddit and should be treated
   cautiously. If true, it raises notable questions about distillation from preview
   models, export controls, and inadvertent leakage of proprietary tool interfaces.
-draft: true
+draft: false
 ---
 
 Open weights have a way of appearing in places no one planned for. The latest example, if the claims hold up, is a small distilled model that purportedly carries fingerprints of a frontier preview that was pulled offline almost as soon as it appeared. The story is worth examining not because the details are confirmed — they are not — but because of the questions it raises if any part of it is true.

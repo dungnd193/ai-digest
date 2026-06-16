@@ -22,7 +22,7 @@ summary: 'Một lập trình viên trong cộng đồng đã phát hành Qwable-
   Reddit và nên được tiếp nhận một cách thận trọng. Nếu đúng, điều này đặt ra những
   câu hỏi đáng chú ý về việc distill từ các preview model, vấn đề kiểm soát xuất khẩu,
   và sự rò rỉ ngoài ý muốn của các tool interface độc quyền.'
-draft: true
+draft: false
 ---
 
 Open weights có những cách xuất hiện ở những nơi không ai lường trước. Ví dụ mới nhất, nếu các tuyên bố là đúng, là một small distilled model được cho là mang dấu vết của một frontier preview đã bị gỡ offline gần như ngay khi vừa xuất hiện. Câu chuyện này đáng để xem xét không phải vì các chi tiết đã được xác nhận — chúng chưa được xác nhận — mà vì những câu hỏi nó đặt ra nếu bất kỳ phần nào trong đó là thật.
