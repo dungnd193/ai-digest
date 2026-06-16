@@ -34,7 +34,11 @@ class TelegramClient:
                     [{"text": label, "callback_data": data} for label, data in buttons]
                 ]
             }
-        return self._call("sendMessage", payload)["message_id"]
+        result = self._call("sendMessage", payload)
+        try:
+            return result["message_id"]
+        except (KeyError, TypeError) as exc:
+            raise TelegramError(f"sendMessage missing message_id: {result}") from exc
 
     def edit_message_text(self, message_id: int, text: str) -> None:
         self._call("editMessageText", {

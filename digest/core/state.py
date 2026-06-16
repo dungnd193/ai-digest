@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from pathlib import Path
 
 from digest.core.models import Article
@@ -42,5 +43,8 @@ class SeenStore:
 
     def save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self.path.open("w", encoding="utf-8") as fh:
+        # atomic replace: a concurrent reader never observes a half-written file
+        tmp = self.path.with_suffix(self.path.suffix + ".tmp")
+        with tmp.open("w", encoding="utf-8") as fh:
             json.dump(sorted(self._ids), fh, indent=2)
+        os.replace(tmp, self.path)

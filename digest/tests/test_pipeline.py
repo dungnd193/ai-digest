@@ -35,7 +35,10 @@ def _build(**over):
     deps["quality_gate"].check.return_value = QualityVerdict(passed=True, reason="ok")
     deps["telegram"].send_message.return_value = 99
     # write_posts returns a path per post (mocked as strings)
-    deps["publisher"].write_posts.return_value = ["/tmp/p.en.md", "/tmp/p.vi.md"]
+    # write_posts returns exactly one path per post (mirrors real Publisher)
+    deps["publisher"].write_posts.side_effect = (
+        lambda posts, **kw: [f"/tmp/{p.slug}.{p.lang}.md" for p in posts]
+    )
     # reporter.daily_summary delegates to telegram (mirrors real Reporter behaviour)
     deps["reporter"].daily_summary.side_effect = lambda r: deps["telegram"].send_message("summary")
     return deps
@@ -85,3 +88,25 @@ def test_pipeline_failed_quality_gate_skips_post():
     # nothing published, but seen still marked (articles were processed)
     assert report.published == 0
     deps["seen"].add_many.assert_called_once()
+
+
+def test_pipeline_zero_articles_short_circuits():
+    deps = _build()
+    deps["ingestor"].gather.return_value = []
+    report = Pipeline(**deps).run()
+    assert report.articles_in == 0
+    deps["processor"].process_many.assert_not_called()
+    deps["reporter"].daily_summary.assert_called_once()
+    # no posts, no seen writes on the empty path
+    deps["seen"].add_many.assert_not_called()
+
+
+def test_pipeline_callback_key_truncates_long_slug():
+    deps = _build(approval_required=True)
+    long_slug = "x" * 120
+    deps["writer"].write.return_value = [_en_post(slug=long_slug)]
+    Pipeline(**deps).run()
+    rec = deps["post_store"].upsert.call_args.args[0]
+    # callback_data is "<action>:<key>"; longest prefix is "disc:" (5 bytes).
+    # Telegram caps callback_data at 64 bytes.
+    assert len("disc:" + rec.key) <= 64

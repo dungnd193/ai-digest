@@ -68,7 +68,7 @@ class Pipeline:
         report.posts_written = len(groups)
 
         if self.approval_required:
-            self._write_and_request(groups, articles)
+            self._write_and_request(groups)
         else:
             self._write_and_publish(all_posts, report)
 
@@ -79,13 +79,15 @@ class Pipeline:
         self.reporter.daily_summary(report)
         return report
 
-    def _write_and_request(self, groups, articles) -> None:
+    def _write_and_request(self, groups) -> None:
         all_posts = [p for g in groups for p in g["posts"]]
         files = self.publisher.write_posts(all_posts, draft=True)
-        files_by_post = dict(zip(all_posts, files))
+        # strict zip guards against a partial write_posts result silently dropping posts
+        files_by_post = dict(zip(all_posts, files, strict=True))
         for g in groups:
             en = g["en"]
-            key = f"{en.date}:{en.slug}"
+            # cap slug so callback_data stays within Telegram's 64-byte limit
+            key = f"{en.date}:{en.slug[:47]}"
             g_files = [str(files_by_post[p]) for p in g["posts"]]
             article_ids = [make_id(u) for u in en.sources]
             buttons = [

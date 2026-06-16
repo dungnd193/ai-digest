@@ -51,3 +51,21 @@ def test_apply_discard_deletes_files_and_marks_seen(tmp_path):
     assert not f.exists()
     seen.add_many.assert_called_once_with(["id1"])
     assert store.get("k").state == "discarded"
+
+
+def test_apply_discard_refuses_to_delete_outside_repo(tmp_path):
+    # a file outside repo_dir must NOT be deleted even if a record references it
+    outside = tmp_path.parent / "outside.md"
+    outside.write_text("keep me")
+    repo = tmp_path / "repo"; repo.mkdir()
+    store = PostStore(repo / "posts.json")
+    store.upsert(PostRecord(
+        key="k", date="2026-06-16", slug="s", title="T", state=PostState.PENDING.value,
+        files=[str(outside)], article_ids=["id1"], message_id=1,
+    ))
+    svc = ApprovalService(store=store, publisher=MagicMock(), seen=MagicMock(),
+                          repo_dir=str(repo))
+    svc.apply("disc", "k")
+    assert outside.exists()  # path-traversal guard kept it
+    assert store.get("k").state == "discarded"
+    outside.unlink()

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -54,5 +55,9 @@ class PostStore:
 
     def save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self.path.open("w", encoding="utf-8") as fh:
+        # write to a temp file then atomically replace, so a concurrent reader
+        # (e.g. the approver while the orchestrator runs) never sees a partial file
+        tmp = self.path.with_suffix(self.path.suffix + ".tmp")
+        with tmp.open("w", encoding="utf-8") as fh:
             json.dump({k: asdict(v) for k, v in self._records.items()}, fh, indent=2)
+        os.replace(tmp, self.path)

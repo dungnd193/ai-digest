@@ -58,9 +58,14 @@ class ApprovalService:
             return f"✏️ Held: {rec.title}"
 
         if action == "disc":
+            repo = Path(self.repo_dir).resolve()
             for f in rec.files:
+                target = Path(f).resolve()
+                if not target.is_relative_to(repo):
+                    logger.warning("refusing to delete %s: outside repo %s", target, repo)
+                    continue
                 try:
-                    Path(f).unlink(missing_ok=True)
+                    target.unlink(missing_ok=True)
                 except OSError as exc:
                     logger.warning("could not delete %s: %s", f, exc)
             self._mark_seen(rec.article_ids)

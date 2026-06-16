@@ -46,3 +46,10 @@ def test_raises_telegramerror_on_http_failure():
     with patch("digest.core.telegram.requests.post", side_effect=Exception("boom")):
         with pytest.raises(TelegramError):
             TelegramClient("tok", "chat").send_message("hi")
+
+
+def test_send_message_raises_telegramerror_when_message_id_missing():
+    # ok=true but result has no message_id must surface as TelegramError, not KeyError
+    with patch("digest.core.telegram.requests.post", return_value=_resp(result={})):
+        with pytest.raises(TelegramError):
+            TelegramClient("tok", "chat").send_message("hi")

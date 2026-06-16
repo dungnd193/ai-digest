@@ -5,6 +5,8 @@ import os
 from datetime import date as _date
 from pathlib import Path
 
+import yaml
+
 from digest.agents.analyst import Analyst
 from digest.agents.clusterer import Clusterer
 from digest.agents.collector import Collector
@@ -31,7 +33,6 @@ _ROOT = Path(__file__).resolve().parent.parent
 def main(run_date: str | None = None) -> None:
     load_env()
     settings = load_settings(_ROOT / "digest" / "config" / "settings.yaml")
-    import yaml
     feeds_cfg = yaml.safe_load((_ROOT / "digest" / "config" / "feeds.yaml").read_text())
 
     router = build_router()
