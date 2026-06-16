@@ -21,7 +21,7 @@ summary: 'Bản dịch tiếng Việt:
   Đây là một hướng dẫn thực hành, mang tính ứng dụng dành cho những người đang tối
   ưu hóa inference và training của model. Bài viết mang lại giá trị giáo dục vững
   chắc nhưng không có tính thời sự rộng rãi.'
-draft: true
+draft: false
 ---
 
 ## MLP được viết theo cách ngây thơ

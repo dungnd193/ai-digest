@@ -17,7 +17,7 @@ summary: This second installment of a PyTorch profiling series walks through opt
   kernel fusion cuts overhead and improves throughput. The post is a practical, hands-on
   guide for practitioners optimizing model inference and training. It offers solid
   educational value without being broadly newsworthy.
-draft: true
+draft: false
 ---
 
 This is the second part of a series on profiling PyTorch code. In the first installment we set up the tooling and learned to read a profile; here we put it to work on a concrete optimization. The target is a multilayer perceptron — about as ordinary a building block as deep learning has — and the journey takes it from a naive stack of `nn.Linear` modules to a single fused implementation. Along the way the profiler does what it does best: it tells us where the time actually goes, rather than where we assume it goes.
