@@ -18,7 +18,7 @@ summary: A widely discussed LocalLLaMA post argues against defaulting to Ollama 
   or flexible engines. As an opinion-driven discussion rather than a release or finding,
   its significance is mainly sentiment-level. It is useful as a signal of shifting
   practitioner preferences in the local-inference ecosystem.
-draft: true
+draft: false
 ---
 
 For the better part of two years, "just use Ollama" has been the reflexive answer to almost every local-LLM question. Want to run a model on your laptop? `ollama run llama3`. Need an API for your side project? It's already listening on `localhost:11434`. That frictionlessness is exactly why Ollama became the default — and why a recent, widely circulated LocalLLaMA post pushing back on it struck a nerve.

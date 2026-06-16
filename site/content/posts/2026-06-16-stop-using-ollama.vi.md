@@ -20,7 +20,7 @@ summary: Một bài đăng trên LocalLLaMA được thảo luận rộng rãi l
   release hay finding, tầm quan trọng của nó chủ yếu nằm ở mức độ sentiment-level.
   Nó hữu ích như một tín hiệu về sự thay đổi trong sở thích của các practitioner trong
   hệ sinh thái local-inference.
-draft: true
+draft: false
 ---
 
 Trong gần hai năm qua, "cứ dùng Ollama đi" đã là câu trả lời theo phản xạ cho gần như mọi câu hỏi về local-LLM. Muốn chạy một model trên laptop? `ollama run llama3`. Cần một API cho dự án phụ của bạn? Nó đã lắng nghe sẵn tại `localhost:11434`. Chính sự không-ma-sát đó là lý do Ollama trở thành lựa chọn mặc định — và cũng là lý do một bài đăng gần đây trên LocalLLaMA được lan truyền rộng rãi phản bác lại nó đã chạm đúng điểm nhạy cảm.
