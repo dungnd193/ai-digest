@@ -101,6 +101,45 @@ def test_pipeline_zero_articles_short_circuits():
     deps["seen"].add_many.assert_not_called()
 
 
+def test_pipeline_caps_articles_per_run():
+    deps = _build(approval_required=False, max_articles=2)
+    arts = [Article.create(url=f"https://s{i}.com", title=f"A{i}", source=f"feed{i % 3}")
+            for i in range(10)]
+    deps["ingestor"].gather.return_value = arts
+    report = Pipeline(**deps).run()
+    assert report.articles_in == 2
+    passed = deps["processor"].process_many.call_args.args[0]
+    assert len(passed) == 2
+
+
+def test_pipeline_cap_interleaves_sources():
+    # 5 from feedA then 5 from feedB; naive truncation would pick only feedA
+    deps = _build(approval_required=False, max_articles=3)
+    arts = ([Article.create(url=f"https://a{i}.com", title="A", source="feedA") for i in range(5)]
+            + [Article.create(url=f"https://b{i}.com", title="B", source="feedB") for i in range(5)])
+    deps["ingestor"].gather.return_value = arts
+    Pipeline(**deps).run()
+    passed = deps["processor"].process_many.call_args.args[0]
+    assert {a.source for a in passed} == {"feedA", "feedB"}  # diversity preserved
+
+
+def test_pipeline_no_cap_when_max_articles_zero():
+    deps = _build(approval_required=False, max_articles=0)
+    arts = [Article.create(url=f"https://s{i}.com", title="A", source="f") for i in range(6)]
+    deps["ingestor"].gather.return_value = arts
+    report = Pipeline(**deps).run()
+    assert report.articles_in == 6
+
+
+def test_pipeline_dry_run_writes_but_does_not_push():
+    deps = _build(approval_required=False, publish_enabled=False)
+    report = Pipeline(**deps).run()
+    deps["publisher"].write_posts.assert_called()          # files still written
+    deps["publisher"].commit_and_push.assert_not_called()  # but not pushed
+    assert report.published == 0
+    assert any("dry-run" in e for e in report.errors)
+
+
 def test_pipeline_callback_key_truncates_long_slug():
     deps = _build(approval_required=True)
     long_slug = "x" * 120

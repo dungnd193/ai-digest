@@ -1,17 +1,22 @@
-schedule: daily
-languages: [en, vi]
-vi_keep_english_terms: true
-articles_per_run: 8
-translator_mode: draft_then_review
-approval_required: true
-categories: [Research, Tools, Industry, Tutorial, Opinion]
+schedule: daily                       # informational; real scheduling is via cron
+languages: [en, vi]                   # wired
+vi_keep_english_terms: true           # informational; the translator prompt always keeps EN terms
+articles_per_run: 6                   # wired: cap per run (interleaved across sources for diversity)
+translator_mode: draft_then_review    # wired: gemma_only | draft_then_review | claude_only
+approval_required: true               # wired: true = review via Telegram buttons before publish
+categories: [Research, Tools, Industry, Tutorial, Opinion]   # wired
 discovery:
-  enabled: true
-  keywords: ["multi-agent LLM", "AI automation", "agentic workflows"]
+  enabled: true                       # wired
+  keywords:                           # wired: Tavily daily search topics
+    - "latest AI news"
+    - "trending AI models"
+    - "new LLM release"
+    - "AI research breakthrough"
+    - "AI startup funding"
 steps:
-  digest: true
-  blog: true
-  publish: true
+  digest: true                        # informational
+  blog: true                          # informational
+  publish: true                       # wired: false = dry-run (write files locally, do NOT git push)
 notify:
-  telegram_daily_summary: true
-  telegram_error_alert: true
+  telegram_daily_summary: true        # informational; Reporter always sends a summary
+  telegram_error_alert: true          # informational

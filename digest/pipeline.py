@@ -17,7 +17,7 @@ class Pipeline:
         self, *, ingestor, processor, clusterer, analyst, writer, translator,
         quality_gate, publisher, seen, post_store, reporter, telegram,
         languages, keywords, discovery_enabled, approval_required, repo_dir,
-        date, site_url="",
+        date, site_url="", max_articles=0, publish_enabled=True,
     ) -> None:
         self.ingestor = ingestor
         self.processor = processor
@@ -38,10 +38,14 @@ class Pipeline:
         self.repo_dir = repo_dir
         self.date = date
         self.site_url = site_url
+        self.max_articles = max_articles
+        self.publish_enabled = publish_enabled
 
     def run(self) -> RunReport:
         report = RunReport(site_url=self.site_url)
         articles = self.ingestor.gather(self.keywords, self.discovery_enabled)
+        if self.max_articles and len(articles) > self.max_articles:
+            articles = self._interleave_by_source(articles)[: self.max_articles]
         report.articles_in = len(articles)
         if not articles:
             self.reporter.daily_summary(report)
@@ -106,5 +110,27 @@ class Pipeline:
 
     def _write_and_publish(self, all_posts, report) -> None:
         self.publisher.write_posts(all_posts, draft=False)
+        if not self.publish_enabled:
+            report.errors.append("dry-run (steps.publish=false): files written, not pushed")
+            return
         self.publisher.commit_and_push("post: daily digest", repo_dir=self.repo_dir)
         report.published = len({p.slug for p in all_posts})
+
+    @staticmethod
+    def _interleave_by_source(articles):
+        """Round-robin articles across their sources so a cap keeps diversity
+        instead of taking N items from whichever feed came first."""
+        from collections import OrderedDict
+
+        buckets: "OrderedDict[str, list]" = OrderedDict()
+        for a in articles:
+            buckets.setdefault(a.source, []).append(a)
+        out: list = []
+        queues = list(buckets.values())
+        while queues:
+            for q in list(queues):
+                if q:
+                    out.append(q.pop(0))
+                if not q:
+                    queues.remove(q)
+        return out

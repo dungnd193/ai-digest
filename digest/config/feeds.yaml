@@ -1,4 +1,15 @@
+# RSS sources — curated for: hot AI news, trends, research, community models, startups.
+# Add/remove freely; one broken feed is skipped, never aborts the run.
 feeds:
-  - https://hnrss.org/frontpage
-  - https://feeds.arstechnica.com/arstechnica/index
-topics: ["AI", "machine learning", "agents", "software"]
+  # Hot news & trending discussions
+  - https://hnrss.org/newest?q=AI+OR+LLM+OR+%22language+model%22&points=50
+  - https://the-decoder.com/feed/
+  # Research & new models
+  - https://huggingface.co/blog/feed.xml
+  - http://export.arxiv.org/rss/cs.AI
+  - https://blog.google/technology/ai/rss/
+  # Community: models & problems people care about right now
+  - https://www.reddit.com/r/LocalLLaMA/.rss
+  # Industry, startups, deeper trends
+  - https://techcrunch.com/category/artificial-intelligence/feed/
+  - https://www.technologyreview.com/topic/artificial-intelligence/feed

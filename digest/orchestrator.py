@@ -62,6 +62,8 @@ def main(run_date: str | None = None) -> None:
         repo_dir=str(_ROOT),
         date=run_date or _date.today().isoformat(),
         site_url=os.environ.get("SITE_URL", ""),
+        max_articles=settings.get("articles_per_run", 0),
+        publish_enabled=settings.get("steps.publish", True),
     )
     pipeline.run()
 
