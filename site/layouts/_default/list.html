@@ -9,7 +9,7 @@
       <h2 class="day-label">{{ .Key }}</h2>
       {{ range .Pages }}
         <a class="card" href="{{ .RelPermalink }}">
-          {{ with .Params.category }}<span class="badge">{{ . }}</span>{{ end }}
+          {{ with .Params.categories }}<span class="badge">{{ index . 0 }}</span>{{ end }}
           <h3>{{ .Title }}</h3>
           {{ with .Params.summary }}<p>{{ . | truncate 200 }}</p>{{ end }}
         </a>

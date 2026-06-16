@@ -3,7 +3,7 @@
     <div class="article-head">
       <div class="meta">
         <time>{{ .Date.Format "January 2, 2006" }}</time>
-        {{ with .Params.category }}<span class="sep">·</span><span class="badge">{{ . }}</span>{{ end }}
+        {{ with .Params.categories }}<span class="sep">·</span><span class="badge">{{ index . 0 }}</span>{{ end }}
       </div>
       <h1>{{ .Title }}</h1>
       {{ with .Params.summary }}<p style="color:var(--muted);font-size:1.1rem;margin:0;">{{ . }}</p>{{ end }}
