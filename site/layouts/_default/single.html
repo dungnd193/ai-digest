@@ -1,22 +1,26 @@
 {{ define "main" }}
   <article>
     <div class="article-head">
-      <div class="meta">
-        <time>{{ .Date.Format "January 2, 2006" }}</time>
-        {{ with .Params.categories }}<span class="sep">·</span><span class="badge">{{ index . 0 }}</span>{{ end }}
-      </div>
+      {{ if eq .Section "posts" }}
+        <div class="meta">
+          <time>{{ .Date.Format "January 2, 2006 · 15:04" }}</time>
+          {{ with .Params.categories }}<span class="sep">·</span><span class="badge">{{ index . 0 }}</span>{{ end }}
+        </div>
+      {{ end }}
       <h1>{{ .Title }}</h1>
       {{ with .Params.summary }}<p style="color:var(--muted);font-size:1.1rem;margin:0;">{{ . }}</p>{{ end }}
     </div>
 
     <div class="prose">{{ .Content }}</div>
 
-    {{ with .Params.tags }}
-      <div class="tags">
-        {{ range . }}<a href="{{ "tags/" | relLangURL }}{{ . | urlize }}/">#{{ . }}</a>{{ end }}
-      </div>
+    {{ if eq .Section "posts" }}
+      {{ with .Params.tags }}
+        <div class="tags">
+          {{ range . }}<a href="{{ "tags/" | relLangURL }}{{ . | urlize }}/">#{{ . }}</a>{{ end }}
+        </div>
+      {{ end }}
     {{ end }}
 
-    <a class="back" href="{{ "/" | relLangURL }}">← {{ .Site.Title }}</a>
+    <a class="back" href="{{ .Site.Home.RelPermalink }}">← {{ .Site.Title }}</a>
   </article>
 {{ end }}

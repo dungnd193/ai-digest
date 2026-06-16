@@ -1,6 +1,6 @@
 ---
 title: Microsoft turns to AWS as GitHub faces AI capacity crunch
-date: '2026-06-16'
+date: '2026-06-16T08:04:00'
 lang: en
 slug: microsoft-turns-to-aws-as-github-faces-ai-capacity-crunch
 categories:

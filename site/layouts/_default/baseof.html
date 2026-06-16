@@ -13,11 +13,10 @@
 <body>
   <header class="site-header">
     <div class="wrap">
-      <a class="brand" href="{{ "/" | relLangURL }}"><span class="dot"></span>{{ .Site.Title }}</a>
+      <a class="brand" href="{{ .Site.Home.RelPermalink }}"><span class="dot"></span>{{ .Site.Title }}</a>
       <nav class="langs">
-        {{ range .Site.Languages }}
-          <a href="{{ printf "/%s/" .Lang | relURL }}">{{ .LanguageName }}</a>
-        {{ end }}
+        {{ with .Site.GetPage "/architecture" }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+        {{ range .AllTranslations }}<a href="{{ .RelPermalink }}">{{ .Language.LanguageName }}</a>{{ end }}
       </nav>
     </div>
   </header>

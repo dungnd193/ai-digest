@@ -1,6 +1,6 @@
 ---
 title: 'Profiling in PyTorch (Part 2): from nn.Linear to a fused MLP'
-date: '2026-06-16'
+date: '2026-06-16T08:08:00'
 lang: en
 slug: profiling-in-pytorch-part-2-from-nn-linear-to-a-fused-mlp
 categories:

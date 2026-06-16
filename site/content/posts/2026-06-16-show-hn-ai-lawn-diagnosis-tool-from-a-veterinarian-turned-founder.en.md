@@ -1,6 +1,6 @@
 ---
 title: 'Show HN: AI lawn diagnosis tool from a veterinarian-turned-founder'
-date: '2026-06-16'
+date: '2026-06-16T08:09:00'
 lang: en
 slug: show-hn-ai-lawn-diagnosis-tool-from-a-veterinarian-turned-founder
 categories:

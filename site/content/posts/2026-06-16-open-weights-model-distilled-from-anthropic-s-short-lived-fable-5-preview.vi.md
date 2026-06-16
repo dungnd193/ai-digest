@@ -1,6 +1,6 @@
 ---
 title: Bản mở model open-weights chưng cất từ bản preview Fable-5 ngắn ngủi của Anthropic
-date: '2026-06-16'
+date: '2026-06-16T08:06:00'
 lang: vi
 slug: open-weights-model-distilled-from-anthropic-s-short-lived-fable-5-preview
 categories:

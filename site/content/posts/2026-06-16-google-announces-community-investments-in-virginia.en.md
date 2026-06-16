@@ -1,6 +1,6 @@
 ---
 title: Google announces community investments in Virginia
-date: '2026-06-16'
+date: '2026-06-16T08:02:00'
 lang: en
 slug: google-announces-community-investments-in-virginia
 categories:

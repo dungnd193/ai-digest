@@ -1,6 +1,6 @@
 ---
 title: 'Dr-DCI: mở rộng quy mô tìm kiếm agentic thông qua mở rộng workspace động'
-date: '2026-06-16'
+date: '2026-06-16T08:01:00'
 lang: vi
 slug: dr-dci-scaling-agentic-search-via-dynamic-workspace-expansion
 categories:

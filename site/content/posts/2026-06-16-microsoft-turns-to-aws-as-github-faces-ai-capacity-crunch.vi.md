@@ -1,6 +1,6 @@
 ---
 title: Microsoft chuyển sang AWS khi GitHub đối mặt với khủng hoảng năng lực AI
-date: '2026-06-16'
+date: '2026-06-16T08:04:00'
 lang: vi
 slug: microsoft-turns-to-aws-as-github-faces-ai-capacity-crunch
 categories:

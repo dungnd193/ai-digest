@@ -1,6 +1,6 @@
 ---
 title: Stop using Ollama
-date: '2026-06-16'
+date: '2026-06-16T08:10:00'
 lang: en
 slug: stop-using-ollama
 categories:

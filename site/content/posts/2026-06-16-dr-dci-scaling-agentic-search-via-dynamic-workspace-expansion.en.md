@@ -1,6 +1,6 @@
 ---
 title: 'Dr-DCI: scaling agentic search via dynamic workspace expansion'
-date: '2026-06-16'
+date: '2026-06-16T08:01:00'
 lang: en
 slug: dr-dci-scaling-agentic-search-via-dynamic-workspace-expansion
 categories:

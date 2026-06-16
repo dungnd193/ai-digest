@@ -1,6 +1,6 @@
 ---
 title: 'Olmo-eval: Bàn làm việc đánh giá cho vòng lặp phát triển model'
-date: '2026-06-16'
+date: '2026-06-16T08:05:00'
 lang: vi
 slug: olmo-eval-an-evaluation-workbench-for-the-model-development-loop
 categories:

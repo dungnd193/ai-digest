@@ -1,6 +1,6 @@
 ---
 title: A Definition of Good Explanations and the Challenges Explaining LLM Outputs
-date: '2026-06-16'
+date: '2026-06-16T08:00:00'
 lang: en
 slug: a-definition-of-good-explanations-and-the-challenges-explaining-llm-outputs
 categories:

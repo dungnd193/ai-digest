@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import re
+from datetime import datetime, timedelta
 
 from digest.core.content_types import BlogPost, slugify
 from digest.core.digest_types import Digest, DigestEntry
@@ -76,10 +77,18 @@ class Writer:
         self.router = router
 
     def write(self, digest: Digest, *, date: str) -> list[BlogPost]:
+        # most important first; give each a strictly decreasing timestamp so the
+        # site sorts newest-run-first and, within a run, by importance.
+        try:
+            base = datetime.fromisoformat(date)
+        except ValueError:
+            base = None
+        entries = sorted(digest.entries, key=lambda e: -e.importance)
         posts: list[BlogPost] = []
-        for entry in digest.entries:
+        for i, entry in enumerate(entries):
+            ts = (base - timedelta(seconds=i)).isoformat(timespec="seconds") if base else date
             try:
-                posts.append(self._write_one(entry, date))
+                posts.append(self._write_one(entry, ts))
             except Exception as exc:  # noqa: BLE001 - one failure shouldn't abort
                 logger.warning("writing failed for %r: %s", entry.title, exc)
         return posts

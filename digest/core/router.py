@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import logging
 import os
 import time
 
 from digest.core.backends import Backend, BackendError, ClaudeBackend, OllamaBackend
+
+logger = logging.getLogger("digest.router")
 
 CHEAP = "cheap"
 SMART = "smart"
@@ -37,8 +40,11 @@ class Router:
 
         last_error: BackendError | None = None
         for attempt in range(self.retries + 1):
+            t0 = time.perf_counter()
             try:
-                return backend.generate(task, system=system)
+                out = backend.generate(task, system=system)
+                logger.info("call tier=%s %.2fs (%d chars)", tier, time.perf_counter() - t0, len(out))
+                return out
             except BackendError as exc:
                 last_error = exc
                 if attempt < self.retries:

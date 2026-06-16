@@ -1,6 +1,6 @@
 ---
 title: 'Việt Nam: Google công bố các khoản đầu tư cộng đồng tại Virginia'
-date: '2026-06-16'
+date: '2026-06-16T08:02:00'
 lang: vi
 slug: google-announces-community-investments-in-virginia
 categories:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import date as _date
+from datetime import datetime
 from pathlib import Path
 
 import yaml
@@ -26,12 +26,30 @@ from digest.core.state import SeenStore
 from digest.core.telegram import TelegramClient
 from digest.pipeline import Pipeline
 
-logging.basicConfig(level=logging.INFO)
 _ROOT = Path(__file__).resolve().parent.parent
+
+
+def _setup_logging(run_ts: str) -> Path:
+    """Log to console AND a per-run file with timestamps, so each step/agent's
+    timing is captured for performance review (digest/state/runs/<ts>.log)."""
+    runs_dir = _ROOT / "digest" / "state" / "runs"
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    log_path = runs_dir / f"{run_ts.replace(':', '-')}.log"
+    fmt = logging.Formatter("%(asctime)s %(levelname)-5s %(name)s | %(message)s", "%H:%M:%S")
+    root = logging.getLogger()
+    root.setLevel(logging.INFO)
+    fh = logging.FileHandler(log_path, encoding="utf-8"); fh.setFormatter(fmt)
+    sh = logging.StreamHandler(); sh.setFormatter(fmt)
+    root.handlers = [fh, sh]
+    return log_path
 
 
 def main(run_date: str | None = None) -> None:
     load_env()
+    run_ts = run_date or datetime.now().isoformat(timespec="seconds")
+    log_path = _setup_logging(run_ts)
+    logging.getLogger(__name__).info("AI Digest run %s — logging to %s", run_ts, log_path)
+
     settings = load_settings(_ROOT / "digest" / "config" / "settings.yaml")
     feeds_cfg = yaml.safe_load((_ROOT / "digest" / "config" / "feeds.yaml").read_text())
 
@@ -60,10 +78,11 @@ def main(run_date: str | None = None) -> None:
         discovery_enabled=settings.get("discovery.enabled", True),
         approval_required=settings.get("approval_required", True),
         repo_dir=str(_ROOT),
-        date=run_date or _date.today().isoformat(),
+        date=run_ts,
         site_url=os.environ.get("SITE_URL", ""),
         max_articles=settings.get("articles_per_run", 0),
         publish_enabled=settings.get("steps.publish", True),
+        model_mode=settings.get("model_mode", "both"),
     )
     pipeline.run()
 

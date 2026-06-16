@@ -1,7 +1,7 @@
 ---
 title: 'Tăng trưởng AI: Google đầu tư 1,5 tỷ USD để mở rộng khuôn viên data center
   tại Alabama'
-date: '2026-06-16'
+date: '2026-06-16T08:03:00'
 lang: vi
 slug: google-invests-1-5b-to-expand-alabama-data-center-campus
 categories:

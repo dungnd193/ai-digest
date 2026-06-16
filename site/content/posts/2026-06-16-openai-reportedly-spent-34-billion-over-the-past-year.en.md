@@ -1,6 +1,6 @@
 ---
 title: OpenAI reportedly spent $34 billion over the past year
-date: '2026-06-16'
+date: '2026-06-16T08:07:00'
 lang: en
 slug: openai-reportedly-spent-34-billion-over-the-past-year
 categories:

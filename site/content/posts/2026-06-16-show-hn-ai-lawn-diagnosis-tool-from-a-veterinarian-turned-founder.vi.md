@@ -1,6 +1,6 @@
 ---
 title: Bệnh chẩn đoán cỏ sân vườn bằng AI từ một nhà sáng lập vốn là bác sĩ thú y
-date: '2026-06-16'
+date: '2026-06-16T08:09:00'
 lang: vi
 slug: show-hn-ai-lawn-diagnosis-tool-from-a-veterinarian-turned-founder
 categories:

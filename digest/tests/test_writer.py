@@ -54,8 +54,21 @@ def test_writer_sets_fields_and_slug():
     assert p.lang == "en"
     assert p.title == "Multi-Agent Systems"
     assert p.slug == "multi-agent-systems"
-    assert p.date == "2026-06-16"
+    assert p.date.startswith("2026-06-16")   # full datetime now, for time-sorting
     assert p.category == "Tools"
+
+
+def test_writer_sorts_by_importance_with_decreasing_timestamps():
+    router = MagicMock()
+    router.run.return_value = "Body."
+    low = DigestEntry(title="Low", category="Tools", summary="s", importance=1,
+                      sources=("https://a.com",), tags=())
+    high = DigestEntry(title="High", category="Tools", summary="s", importance=5,
+                       sources=("https://b.com",), tags=())
+    posts = Writer(router).write(Digest(entries=(low, high)), date="2026-06-16T10:00:00")
+    # most important first, and its timestamp is the latest -> sorts first on the site
+    assert [p.title for p in posts] == ["High", "Low"]
+    assert posts[0].date > posts[1].date
 
 
 def test_writer_appends_sources_section():

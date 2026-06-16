@@ -4,10 +4,11 @@
     <p>{{ with .Site.Params.description }}{{ . }}{{ else }}Daily AI &amp; tech digest.{{ end }}</p>
   </section>
 
-  {{ range .Site.RegularPages.GroupByDate "2006-01-02" }}
+  {{ $posts := where .Site.RegularPages "Section" "posts" }}
+  {{ range $posts.GroupByDate "2006-01-02" }}
     <div class="day">
       <h2 class="day-label">{{ .Key }}</h2>
-      {{ range .Pages }}
+      {{ range .Pages.ByDate.Reverse }}
         <a class="card" href="{{ .RelPermalink }}">
           {{ with .Params.categories }}<span class="badge">{{ index . 0 }}</span>{{ end }}
           <h3>{{ .Title }}</h3>

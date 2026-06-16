@@ -1,6 +1,6 @@
 ---
 title: 'Hồ sơ hiệu năng trong PyTorch (Phần 2): từ nn.Linear đến một fused MLP'
-date: '2026-06-16'
+date: '2026-06-16T08:08:00'
 lang: vi
 slug: profiling-in-pytorch-part-2-from-nn-linear-to-a-fused-mlp
 categories:

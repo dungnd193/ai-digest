@@ -1,7 +1,7 @@
 ---
 title: Tôi Định nghĩa về Giải thích Tốt và Những Thách thức khi Giải thích Đầu ra
   của LLM
-date: '2026-06-16'
+date: '2026-06-16T08:00:00'
 lang: vi
 slug: a-definition-of-good-explanations-and-the-challenges-explaining-llm-outputs
 categories:

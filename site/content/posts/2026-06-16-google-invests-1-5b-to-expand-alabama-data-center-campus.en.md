@@ -1,6 +1,6 @@
 ---
 title: Google invests $1.5B to expand Alabama data center campus
-date: '2026-06-16'
+date: '2026-06-16T08:03:00'
 lang: en
 slug: google-invests-1-5b-to-expand-alabama-data-center-campus
 categories:

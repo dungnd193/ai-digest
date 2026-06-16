@@ -1,6 +1,6 @@
 ---
 title: Open-weights model distilled from Anthropic's short-lived Fable-5 preview
-date: '2026-06-16'
+date: '2026-06-16T08:06:00'
 lang: en
 slug: open-weights-model-distilled-from-anthropic-s-short-lived-fable-5-preview
 categories:

@@ -6,7 +6,7 @@ title: 'Cộng đồng OpenAI được cho là đã chi 34 tỷ USD trong năm q
 
 
   OpenAI được cho là đã chi 34 tỷ USD trong năm qua'
-date: '2026-06-16'
+date: '2026-06-16T08:07:00'
 lang: vi
 slug: openai-reportedly-spent-34-billion-over-the-past-year
 categories:

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import logging
+import time
 
 from digest.agents.approval import encode_callback
 from digest.agents.reporter import RunReport
 from digest.core.models import make_id
 from digest.core.post_state import PostRecord, PostState
+from digest.core.timing import timed
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +19,7 @@ class Pipeline:
         self, *, ingestor, processor, clusterer, analyst, writer, translator,
         quality_gate, publisher, seen, post_store, reporter, telegram,
         languages, keywords, discovery_enabled, approval_required, repo_dir,
-        date, site_url="", max_articles=0, publish_enabled=True,
+        date, site_url="", max_articles=0, publish_enabled=True, model_mode="both",
     ) -> None:
         self.ingestor = ingestor
         self.processor = processor
@@ -40,52 +42,70 @@ class Pipeline:
         self.site_url = site_url
         self.max_articles = max_articles
         self.publish_enabled = publish_enabled
+        self.model_mode = model_mode
 
     def run(self) -> RunReport:
-        report = RunReport(site_url=self.site_url)
-        articles = self.ingestor.gather(self.keywords, self.discovery_enabled)
-        if self.max_articles and len(articles) > self.max_articles:
-            articles = self._interleave_by_source(articles)[: self.max_articles]
+        t_start = time.perf_counter()
+        report = RunReport(
+            site_url=self.site_url, date=self.date[:10] or self.date,
+            mode=self.model_mode, approval=self.approval_required,
+        )
+
+        with timed("ingest", report.timings):
+            articles = self.ingestor.gather(self.keywords, self.discovery_enabled)
+            if self.max_articles and len(articles) > self.max_articles:
+                articles = self._interleave_by_source(articles)[: self.max_articles]
         report.articles_in = len(articles)
+        logger.info("ingested %d articles", len(articles))
         if not articles:
+            report.duration_s = time.perf_counter() - t_start
             self.reporter.daily_summary(report)
             return report
 
-        processed = self.processor.process_many(articles)
-        clusters = self.clusterer.cluster(processed)
-        digest = self.analyst.analyze(clusters)
-        en_posts = self.writer.write(digest, date=self.date)
+        with timed("process", report.timings):
+            processed = self.processor.process_many(articles)
+        with timed("cluster", report.timings):
+            clusters = self.clusterer.cluster(processed)
+        with timed("analyze", report.timings):
+            digest = self.analyst.analyze(clusters)
+        with timed("write", report.timings):
+            en_posts = self.writer.write(digest, date=self.date)
 
-        # group: each kept EN post + its VI translation, tracked by slug
+        # group: each kept EN post + its VI translation
         groups: list[dict] = []
-        for en in en_posts:
-            # dedup: never re-offer/re-publish a story already decided
-            existing = self.post_store.get(self._key(en))
-            if existing is not None and existing.state in ("published", "discarded"):
-                report.errors.append(f"skipped duplicate (already {existing.state}): {en.title}")
-                continue
-            verdict = self.quality_gate.check(en)
-            if not verdict.passed:
-                report.errors.append(f"quality gate rejected: {en.title} ({verdict.reason})")
-                continue
-            posts = [en]
-            if "vi" in self.languages:
-                posts.append(self.translator.translate(en))
-            groups.append({"en": en, "posts": posts})
+        with timed("translate+gate", report.timings):
+            for en in en_posts:
+                # dedup: never re-offer/re-publish a story already decided
+                existing = self.post_store.get(self._key(en))
+                if existing is not None and existing.state in ("published", "discarded"):
+                    report.errors.append(f"skipped duplicate (already {existing.state}): {en.title}")
+                    continue
+                verdict = self.quality_gate.check(en)
+                if not verdict.passed:
+                    report.errors.append(f"quality gate rejected: {en.title} ({verdict.reason})")
+                    continue
+                posts = [en]
+                if "vi" in self.languages:
+                    posts.append(self.translator.translate(en))
+                groups.append({"en": en, "posts": posts})
 
         all_posts = [p for g in groups for p in g["posts"]]
         report.posts_written = len(groups)
+        report.published_titles = [g["en"].title for g in groups]
 
         if groups:
-            if self.approval_required:
-                self._write_and_request(groups)
-            else:
-                self._write_and_publish(all_posts, report)
+            with timed("publish", report.timings):
+                if self.approval_required:
+                    self._write_and_request(groups)
+                else:
+                    self._write_and_publish(all_posts, report)
 
         # idempotency: every ingested article is now "seen"
         self.seen.add_many([a.id for a in articles])
         self.seen.save()
 
+        report.duration_s = time.perf_counter() - t_start
+        logger.info("run finished in %.1fs", report.duration_s)
         self.reporter.daily_summary(report)
         return report
 
@@ -123,8 +143,9 @@ class Pipeline:
 
     @staticmethod
     def _key(post) -> str:
-        # slug capped so callback_data stays within Telegram's 64-byte limit
-        return f"{post.date}:{post.slug[:47]}"
+        # day (not full datetime) + capped slug -> callback_data stays <64 bytes,
+        # and the same story on the same day dedups even across runs.
+        return f"{post.date[:10]}:{post.slug[:47]}"
 
     @staticmethod
     def _interleave_by_source(articles):

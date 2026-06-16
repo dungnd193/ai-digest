@@ -7,7 +7,7 @@
   {{ range .Pages.GroupByDate "2006-01-02" }}
     <div class="day">
       <h2 class="day-label">{{ .Key }}</h2>
-      {{ range .Pages }}
+      {{ range .Pages.ByDate.Reverse }}
         <a class="card" href="{{ .RelPermalink }}">
           {{ with .Params.categories }}<span class="badge">{{ index . 0 }}</span>{{ end }}
           <h3>{{ .Title }}</h3>
