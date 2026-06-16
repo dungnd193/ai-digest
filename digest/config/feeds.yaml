@@ -1,0 +1,4 @@
+feeds:
+  - https://hnrss.org/frontpage
+  - https://feeds.arstechnica.com/arstechnica/index
+topics: ["AI", "machine learning", "agents", "software"]
