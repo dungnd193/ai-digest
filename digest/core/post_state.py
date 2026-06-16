@@ -33,6 +33,12 @@ class PostStore:
     def __init__(self, path: str | Path) -> None:
         self.path = Path(path)
         self._records: dict[str, PostRecord] = {}
+        self.reload()
+
+    def reload(self) -> None:
+        """Re-read records from disk. Lets an always-on approver pick up new
+        pending posts written by a later orchestrator run without restarting."""
+        self._records = {}
         if self.path.exists():
             with self.path.open("r", encoding="utf-8") as fh:
                 for k, v in json.load(fh).items():

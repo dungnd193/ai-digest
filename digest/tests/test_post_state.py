@@ -39,3 +39,17 @@ def test_store_pending_lists_only_pending(tmp_path):
     r2 = _rec("k2"); store.upsert(r2)
     store.set_state("k2", PostState.PUBLISHED)
     assert [r.key for r in store.pending()] == ["k1"]
+
+
+def test_store_reload_picks_up_external_changes(tmp_path):
+    path = tmp_path / "posts.json"
+    s1 = PostStore(path)
+    s1.upsert(PostRecord(key="k1", date="2026-06-16", slug="s", title="T",
+                         state=PostState.PENDING.value, files=[], article_ids=[]))
+    # a separate writer (e.g. orchestrator) adds another record
+    s2 = PostStore(path)
+    s2.upsert(PostRecord(key="k2", date="2026-06-16", slug="s2", title="T2",
+                         state=PostState.PENDING.value, files=[], article_ids=[]))
+    assert s1.get("k2") is None      # stale in memory
+    s1.reload()
+    assert s1.get("k2") is not None  # now visible

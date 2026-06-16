@@ -67,6 +67,8 @@ def main() -> None:
             logger.warning("getUpdates failed: %s", exc)
             time.sleep(5)
             continue
+        if updates:
+            service.store.reload()  # pick up posts from later orchestrator runs
         for upd in updates:
             offset = upd["update_id"] + 1
             try:
