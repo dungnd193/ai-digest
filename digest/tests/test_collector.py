@@ -39,6 +39,17 @@ def test_collector_skips_broken_feed_and_continues():
     assert arts[0].title == "ok"
 
 
+def test_collector_skips_bozo_feed_and_continues():
+    from types import SimpleNamespace
+    bad = SimpleNamespace(feed=SimpleNamespace(title="bad"), entries=[], bozo=1, bozo_exception="boom")
+    good = _feed("Good", [_entry("https://a.com/1", "ok")])
+    def fake_parse(url):
+        return bad if url == "bad" else good
+    with patch("digest.agents.collector.feedparser.parse", side_effect=fake_parse):
+        arts = Collector(["bad", "good"]).collect()
+    assert [a.title for a in arts] == ["ok"]
+
+
 def test_collector_skips_entries_without_link():
     parsed = _feed("F", [{"title": "no link"}, _entry("https://a.com/1", "has link")])
     with patch("digest.agents.collector.feedparser.parse", return_value=parsed):

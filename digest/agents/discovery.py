@@ -4,7 +4,7 @@ import logging
 
 from digest.core.models import Article
 from digest.core.router import Router
-from digest.core.search import SearchError, Searcher
+from digest.core.search import Searcher
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class Discovery:
         for kw in keywords:
             try:
                 results = self.searcher.search(kw, max_results=self.max_results)
-            except SearchError as exc:
+            except Exception as exc:  # noqa: BLE001
                 logger.warning("discovery search failed for %r: %s", kw, exc)
                 continue
             for r in results:

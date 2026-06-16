@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 
 from digest.core.models import Article
+
+logger = logging.getLogger(__name__)
 
 
 class SeenStore:
@@ -18,8 +21,12 @@ class SeenStore:
         self.path = Path(path)
         self._ids: set[str] = set()
         if self.path.exists():
-            with self.path.open("r", encoding="utf-8") as fh:
-                self._ids = set(json.load(fh))
+            try:
+                with self.path.open("r", encoding="utf-8") as fh:
+                    self._ids = set(json.load(fh))
+            except (json.JSONDecodeError, OSError) as exc:
+                logger.warning("could not read seen store %s, starting empty: %s", self.path, exc)
+                self._ids = set()
 
     def has(self, article_id: str) -> bool:
         return article_id in self._ids

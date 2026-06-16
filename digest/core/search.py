@@ -42,17 +42,12 @@ class TavilyBackend:
             resp = requests.post(self.ENDPOINT, json=payload, timeout=self.timeout)
             resp.raise_for_status()
             data = resp.json()
+            return [
+                SearchResult(url=r["url"], title=r.get("title", ""), content=r.get("content", ""))
+                for r in data.get("results", [])
+            ]
         except Exception as exc:  # noqa: BLE001
             raise SearchError(f"Tavily search failed: {exc}") from exc
-
-        return [
-            SearchResult(
-                url=r["url"],
-                title=r.get("title", ""),
-                content=r.get("content", ""),
-            )
-            for r in data.get("results", [])
-        ]
 
 
 def build_searcher() -> Searcher:

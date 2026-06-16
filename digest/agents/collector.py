@@ -24,6 +24,9 @@ class Collector:
             except Exception as exc:  # noqa: BLE001
                 logger.warning("feed failed: %s (%s)", url, exc)
                 continue
+            if getattr(parsed, "bozo", False):
+                logger.warning("feed malformed/unreachable: %s (%s)", url, getattr(parsed, "bozo_exception", ""))
+                continue
             source = getattr(parsed.feed, "title", url)
             for entry in parsed.entries:
                 link = entry.get("link")

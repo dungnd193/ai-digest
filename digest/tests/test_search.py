@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from digest.core.search import SearchError, SearchResult, TavilyBackend
+from digest.core.search import SearchError, SearchResult, TavilyBackend, build_searcher
 
 
 def test_tavily_search_returns_results():
@@ -43,3 +43,20 @@ def test_tavily_search_tolerates_missing_fields():
         be = TavilyBackend(api_key="k")
         out = be.search("x")
     assert out == [SearchResult(url="https://a.com", title="", content="")]
+
+
+def test_tavily_missing_url_raises_searcherror():
+    fake = MagicMock()
+    fake.raise_for_status.return_value = None
+    fake.json.return_value = {"results": [{"title": "no url"}]}
+    with patch("digest.core.search.requests.post", return_value=fake):
+        with pytest.raises(SearchError):
+            TavilyBackend(api_key="k").search("x")
+
+
+def test_build_searcher_uses_env_key(monkeypatch):
+    monkeypatch.setenv("TAVILY_API_KEY", "abc")
+    from digest.core.search import TavilyBackend, build_searcher
+    s = build_searcher()
+    assert isinstance(s, TavilyBackend)
+    assert s.api_key == "abc"

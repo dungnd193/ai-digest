@@ -29,3 +29,10 @@ def test_filter_new_returns_only_unseen(tmp_path):
     store.add(a.id)
     new = store.filter_new([a, b])
     assert new == [b]
+
+
+def test_seenstore_tolerates_corrupt_file(tmp_path):
+    p = tmp_path / "seen.json"
+    p.write_text("{not json", encoding="utf-8")
+    store = SeenStore(p)
+    assert store.has("x") is False
