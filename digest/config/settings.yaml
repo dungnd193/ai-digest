@@ -1,4 +1,5 @@
 schedule: daily                       # informational; real scheduling is via cron
+model_mode: claude_only               # wired: claude_only | both | ollama_only
 languages: [en, vi]                   # wired
 vi_keep_english_terms: true           # informational; the translator prompt always keeps EN terms
 articles_per_run: 6                   # wired: cap per run (interleaved across sources for diversity)

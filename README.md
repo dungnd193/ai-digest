@@ -19,15 +19,21 @@ uv sync
 
 # 2. configure
 cp .env.example .env        # fill in secrets/paths
-$EDITOR digest/config/settings.yaml   # behavior (approval_required, languages, ...)
+$EDITOR digest/config/settings.yaml   # behavior (model_mode, approval_required, ...)
 $EDITOR digest/config/feeds.yaml      # RSS sources
 
 # 3. run the tests
 uv run pytest
 
-# 4. one daily run (dry-run first: set steps.publish=false in settings.yaml)
-uv run python -m digest.orchestrator
+# 4. DAILY USE (personal machine, not 24/7): one command each morning.
+#    Idempotent — kills stale services, starts only what model_mode needs,
+#    leaves the Telegram approver running, runs the digest once.
+./scripts/daily.sh
 ```
+
+**`model_mode`** (in `settings.yaml`) picks the model wiring:
+`claude_only` (fast, no Ollama/PC heat) · `both` (Gemma cheap + Claude smart) ·
+`ollama_only` (fully local). Switch anytime.
 
 See [`docs/SETUP.md`](docs/SETUP.md) for the full checklist (Ollama, Claude CLI,
 Tavily, Telegram bot, GitHub Pages, cron, systemd).

@@ -35,7 +35,7 @@ def main(run_date: str | None = None) -> None:
     settings = load_settings(_ROOT / "digest" / "config" / "settings.yaml")
     feeds_cfg = yaml.safe_load((_ROOT / "digest" / "config" / "feeds.yaml").read_text())
 
-    router = build_router()
+    router = build_router(settings.get("model_mode", "both"))
     searcher = build_searcher()
     seen = SeenStore(_ROOT / "digest" / "state" / "seen.json")
     telegram = TelegramClient(

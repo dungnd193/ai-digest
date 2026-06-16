@@ -55,6 +55,11 @@ the topic below, for readers who already know AI/tech. Use only standard
 CommonMark (headings, lists, code fences, links). Do NOT use any template
 shortcodes. Do NOT invent facts beyond the provided synthesis.
 
+Base EVERY claim strictly on the synthesis below. Do NOT introduce specific
+names, numbers, dates, allegations, quotes, or events that are not in the
+synthesis. If the synthesis is thin, keep the article general and analytical
+rather than inventing concrete details. Do not speculate as if it were fact.
+
 Output ONLY the article body. Start directly with the first sentence or heading.
 Do NOT add any preamble such as "Here's the article", do NOT wrap the output in
 code fences, and do NOT include front-matter or a top-level title heading.

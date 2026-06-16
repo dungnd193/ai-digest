@@ -149,3 +149,13 @@ def test_pipeline_callback_key_truncates_long_slug():
     # callback_data is "<action>:<key>"; longest prefix is "disc:" (5 bytes).
     # Telegram caps callback_data at 64 bytes.
     assert len("disc:" + rec.key) <= 64
+
+
+def test_pipeline_skips_already_published_duplicate():
+    deps = _build(approval_required=False)
+    rec = MagicMock(); rec.state = "published"
+    deps["post_store"].get.return_value = rec   # this story was already published
+    report = Pipeline(**deps).run()
+    deps["publisher"].commit_and_push.assert_not_called()  # nothing new to publish
+    assert any("duplicate" in e for e in report.errors)
+    deps["seen"].add_many.assert_called_once()  # still mark ingested as seen

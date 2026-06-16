@@ -48,15 +48,32 @@ class Router:
         raise last_error
 
 
-def build_router() -> "Router":
-    """Construct the default Router from environment variables.
+def build_router(mode: str = "both") -> "Router":
+    """Construct a Router from environment variables, mapping tiers per `mode`.
 
-    Reads OLLAMA_BASE_URL, OLLAMA_MODEL, CLAUDE_BIN. Call load_env() first
-    if you need a .env file loaded into the environment.
+    Reads OLLAMA_BASE_URL, OLLAMA_MODEL, CLAUDE_BIN. Call load_env() first if you
+    need a .env file loaded into the environment.
+
+    Modes:
+      - "both"        : cheap -> Gemma (Ollama), smart -> Claude   (cheap Claude usage)
+      - "claude_only" : cheap & smart -> Claude                    (fast, no Ollama/PC heat)
+      - "ollama_only" : cheap & smart -> Gemma                     (fully local, free)
     """
-    cheap = OllamaBackend(
-        base_url=os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434"),
-        model=os.environ.get("OLLAMA_MODEL", "gemma3:4b"),
-    )
-    smart = ClaudeBackend(claude_bin=os.environ.get("CLAUDE_BIN", "claude"))
-    return Router(cheap=cheap, smart=smart)
+
+    def ollama() -> OllamaBackend:
+        return OllamaBackend(
+            base_url=os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434"),
+            model=os.environ.get("OLLAMA_MODEL", "gemma3:4b"),
+        )
+
+    def claude() -> ClaudeBackend:
+        return ClaudeBackend(claude_bin=os.environ.get("CLAUDE_BIN", "claude"))
+
+    if mode == "claude_only":
+        return Router(cheap=claude(), smart=claude())
+    if mode == "ollama_only":
+        be = ollama()
+        return Router(cheap=be, smart=be)
+    if mode == "both":
+        return Router(cheap=ollama(), smart=claude())
+    raise ValueError(f"unknown model_mode: {mode!r} (both | claude_only | ollama_only)")

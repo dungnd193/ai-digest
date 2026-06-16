@@ -59,6 +59,11 @@ class Pipeline:
         # group: each kept EN post + its VI translation, tracked by slug
         groups: list[dict] = []
         for en in en_posts:
+            # dedup: never re-offer/re-publish a story already decided
+            existing = self.post_store.get(self._key(en))
+            if existing is not None and existing.state in ("published", "discarded"):
+                report.errors.append(f"skipped duplicate (already {existing.state}): {en.title}")
+                continue
             verdict = self.quality_gate.check(en)
             if not verdict.passed:
                 report.errors.append(f"quality gate rejected: {en.title} ({verdict.reason})")
@@ -71,10 +76,11 @@ class Pipeline:
         all_posts = [p for g in groups for p in g["posts"]]
         report.posts_written = len(groups)
 
-        if self.approval_required:
-            self._write_and_request(groups)
-        else:
-            self._write_and_publish(all_posts, report)
+        if groups:
+            if self.approval_required:
+                self._write_and_request(groups)
+            else:
+                self._write_and_publish(all_posts, report)
 
         # idempotency: every ingested article is now "seen"
         self.seen.add_many([a.id for a in articles])
@@ -90,8 +96,7 @@ class Pipeline:
         files_by_post = dict(zip(all_posts, files, strict=True))
         for g in groups:
             en = g["en"]
-            # cap slug so callback_data stays within Telegram's 64-byte limit
-            key = f"{en.date}:{en.slug[:47]}"
+            key = self._key(en)
             g_files = [str(files_by_post[p]) for p in g["posts"]]
             article_ids = [make_id(u) for u in en.sources]
             buttons = [
@@ -115,6 +120,11 @@ class Pipeline:
             return
         self.publisher.commit_and_push("post: daily digest", repo_dir=self.repo_dir)
         report.published = len({p.slug for p in all_posts})
+
+    @staticmethod
+    def _key(post) -> str:
+        # slug capped so callback_data stays within Telegram's 64-byte limit
+        return f"{post.date}:{post.slug[:47]}"
 
     @staticmethod
     def _interleave_by_source(articles):

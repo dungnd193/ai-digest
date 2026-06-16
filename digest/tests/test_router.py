@@ -83,3 +83,28 @@ def test_build_router_constructs_from_env_and_settings(monkeypatch):
     assert isinstance(r._backends["cheap"], OllamaBackend)
     assert isinstance(r._backends["smart"], ClaudeBackend)
     assert r._backends["cheap"].model == "gemma3:4b"
+
+
+def test_build_router_claude_only(monkeypatch):
+    monkeypatch.setenv("CLAUDE_BIN", "claude")
+    from digest.core.router import build_router
+    from digest.core.backends import ClaudeBackend
+    r = build_router("claude_only")
+    assert isinstance(r._backends["cheap"], ClaudeBackend)
+    assert isinstance(r._backends["smart"], ClaudeBackend)
+
+
+def test_build_router_ollama_only(monkeypatch):
+    monkeypatch.setenv("OLLAMA_MODEL", "gemma4:12b")
+    from digest.core.router import build_router
+    from digest.core.backends import OllamaBackend
+    r = build_router("ollama_only")
+    assert isinstance(r._backends["cheap"], OllamaBackend)
+    assert isinstance(r._backends["smart"], OllamaBackend)
+
+
+def test_build_router_rejects_unknown_mode():
+    import pytest
+    from digest.core.router import build_router
+    with pytest.raises(ValueError):
+        build_router("gpt_only")
