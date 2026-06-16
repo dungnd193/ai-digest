@@ -45,6 +45,24 @@ def test_translator_draft_then_review_two_calls():
     assert out.body == "bản hoàn chỉnh"
 
 
+def test_translator_short_fields_use_smart_tier_in_draft_then_review():
+    # title/summary must NOT use the weak local model (it drifts language)
+    router = MagicMock()
+    router.run.side_effect = ["draft", "review", "title-vi", "summary-vi"]
+    Translator(router, mode="draft_then_review").translate(_en_post(summary="s"))
+    tiers = [c.kwargs["tier"] for c in router.run.call_args_list]
+    # body draft (cheap), body review (smart), title (smart), summary (smart)
+    assert tiers == ["cheap", "smart", "smart", "smart"]
+
+
+def test_translator_title_prompt_demands_vietnamese():
+    router = MagicMock()
+    router.run.return_value = "x"
+    Translator(router, mode="gemma_only").translate(dataclasses.replace(_en_post(), summary=""))
+    title_prompt = router.run.call_args_list[1].args[0]  # 2nd call is the title
+    assert "Vietnamese" in title_prompt and "tiếng Việt" in title_prompt
+
+
 def test_translator_preserves_metadata():
     router = MagicMock()
     router.run.return_value = "vi body"

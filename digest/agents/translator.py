@@ -18,10 +18,12 @@ keep all Markdown and URLs unchanged. Return only the improved content.
 {draft}
 """
 
-_SHORT = """Translate this short blog {kind} to Vietnamese, keeping technical
-terms in English. Return only the translated text.
+_SHORT = """Translate this blog {kind} into Vietnamese (tiếng Việt) ONLY.
+Do NOT output French, Japanese, English, or any language other than Vietnamese.
+Keep technical terms in English (e.g. "multi-agent", "LLM", "fine-tune").
+Return ONLY the translated {kind} — no quotes, no labels, no explanation.
 
-{text}
+{kind}: {text}
 """
 
 
@@ -34,9 +36,9 @@ class Translator:
       - ``draft_then_review`` (default): 1 cheap draft + 1 smart review.
 
     The short metadata fields (``title`` and, if present, ``summary``) are each
-    translated with a single dedicated call — cheap for every mode except
-    ``claude_only`` (smart) — since they are too short to benefit from the
-    draft/review pass. Total calls therefore are:
+    translated with a single dedicated call. They use the smart tier in every
+    mode except ``gemma_only`` (cheap), because the weak local model drifts to
+    the wrong language on short prompts. Total call counts are unchanged:
 
       | mode              | empty summary | non-empty summary |
       |-------------------|---------------|-------------------|
@@ -50,7 +52,9 @@ class Translator:
         self.mode = mode
 
     def translate(self, post: BlogPost) -> BlogPost:
-        short_tier = "smart" if self.mode == "claude_only" else "cheap"
+        # Short fields drift to the wrong language on the weak local model, so
+        # use the smart tier for them in every mode except gemma_only.
+        short_tier = "cheap" if self.mode == "gemma_only" else "smart"
         body = self._translate_text(post.body)
         title = self.router.run(
             _SHORT.format(kind="title", text=post.title), tier=short_tier

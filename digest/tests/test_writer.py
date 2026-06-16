@@ -11,6 +11,32 @@ def _entry(title="Multi-Agent Systems", sources=("https://a.com",)):
     )
 
 
+def test_writer_strips_leading_preamble():
+    router = MagicMock()
+    router.run.return_value = "Here's the article body:\n\n---\n\nReal content here."
+    posts = Writer(router).write(Digest(entries=(_entry(),)), date="2026-06-16")
+    body = posts[0].body
+    assert not body.lower().startswith("here")
+    assert "Real content here." in body
+
+
+def test_writer_unwraps_code_fence():
+    router = MagicMock()
+    router.run.return_value = "```markdown\n# Heading\n\nBody.\n```"
+    posts = Writer(router).write(Digest(entries=(_entry(),)), date="2026-06-16")
+    before_sources = posts[0].body.split("## Sources")[0]
+    assert "```" not in before_sources
+    assert "Body." in before_sources
+
+
+def test_writer_keeps_normal_body_starting_with_heres():
+    # A legitimate sentence beginning with "Here's" (no trailing colon) is kept.
+    router = MagicMock()
+    router.run.return_value = "Here's why multi-agent systems matter. More text."
+    posts = Writer(router).write(Digest(entries=(_entry(),)), date="2026-06-16")
+    assert posts[0].body.startswith("Here's why")
+
+
 def test_writer_produces_one_post_per_entry():
     router = MagicMock()
     router.run.return_value = "This is the article body."

@@ -20,11 +20,44 @@ def _strip_shortcodes(text: str) -> str:
             return stripped
         text = stripped
 
+
+_PREAMBLE_RE = re.compile(
+    r"(?i)^(here'?s|here is|sure|okay|ok|below|i'?ll|certainly|this is)\b.*:\s*$"
+)
+
+
+def _clean_body(text: str) -> str:
+    """Strip model chatter the prompt asked it not to emit: a wrapping code
+    fence, a leading 'Here's the article:' preamble, and leading rules/blanks."""
+    t = text.strip()
+    # unwrap a single ```...``` fence around the whole body
+    if t.startswith("```"):
+        lines = t.split("\n")[1:]
+        if lines and lines[-1].strip().startswith("```"):
+            lines = lines[:-1]
+        t = "\n".join(lines).strip()
+    # drop leading blank lines, horizontal rules, and a preamble line
+    lines = t.split("\n")
+    while lines:
+        first = lines[0].strip()
+        if first == "" or first == "---":
+            lines.pop(0)
+            continue
+        if len(first) < 80 and _PREAMBLE_RE.match(first):
+            lines.pop(0)
+            continue
+        break
+    return "\n".join(lines).strip()
+
+
 _PROMPT = """Write an engaging technical blog article in English Markdown about
 the topic below, for readers who already know AI/tech. Use only standard
 CommonMark (headings, lists, code fences, links). Do NOT use any template
-shortcodes. Do NOT invent facts beyond the provided synthesis. Return only the
-article body (no front-matter, no title heading).
+shortcodes. Do NOT invent facts beyond the provided synthesis.
+
+Output ONLY the article body. Start directly with the first sentence or heading.
+Do NOT add any preamble such as "Here's the article", do NOT wrap the output in
+code fences, and do NOT include front-matter or a top-level title heading.
 
 Topic: {title}
 Synthesis: {summary}
@@ -50,7 +83,7 @@ class Writer:
         raw = self.router.run(
             _PROMPT.format(title=entry.title, summary=entry.summary), tier="smart"
         )
-        body = _strip_shortcodes(raw).strip()
+        body = _clean_body(_strip_shortcodes(raw))
         body += "\n\n## Sources\n" + "\n".join(f"- {u}" for u in entry.sources)
         return BlogPost(
             lang="en",
