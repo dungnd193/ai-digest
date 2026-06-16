@@ -5,3 +5,4 @@ __pycache__/
 state/runs/
 site/public/
 site/resources/
+digest/state/
