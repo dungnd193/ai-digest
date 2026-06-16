@@ -16,7 +16,7 @@ summary: This paper tackles the philosophical and practical problem of defining 
   rather than a fixed property of a model output. The work contributes conceptual
   clarity to the interpretability and XAI literature. Its near-term influence is largely
   academic, though it could inform future explainability standards.
-draft: true
+draft: false
 ---
 
 Ask yourself: when an AI system hands you an explanation, how do you know whether it's any good? Not whether it sounds fluent or confident—whether it actually *explains*. That deceptively simple question turns out to have no settled answer, and a recent paper argues the field has been treating it as a property of the model when it's really a property of the conversation.
