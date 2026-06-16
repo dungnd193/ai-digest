@@ -9,7 +9,8 @@
   --border: #e9e6dd;
   --radius: 14px;
   --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(31,30,28,.05);
-  --maxw: 760px;
+  --maxw: 1080px;      /* wider main area for laptops */
+  --readw: 760px;      /* comfortable reading width for articles */
 }
 
 * { box-sizing: border-box; }
@@ -56,17 +57,23 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 20px 80px; }
 }
 .hero p { color: var(--muted); font-size: 1.05rem; margin: 0; }
 
-/* ---- day group + cards ---- */
-.day { margin-bottom: 44px; }
+/* ---- day group + cards (responsive grid: multi-column on wide screens) ---- */
+.day {
+  margin-bottom: 44px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
 .day-label {
+  grid-column: 1 / -1;       /* label spans the full row */
   font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--primary-dark); margin: 0 0 16px; display: inline-flex; align-items: center; gap: 8px;
+  color: var(--primary-dark); margin: 0; display: inline-flex; align-items: center; gap: 8px;
 }
 .day-label::before { content: ""; width: 22px; height: 2px; background: var(--primary); border-radius: 2px; }
 
 .card {
   display: block; background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 22px 24px; margin-bottom: 16px;
+  border-radius: var(--radius); padding: 22px 24px;
   box-shadow: var(--shadow); transition: transform .12s ease, border-color .12s ease;
 }
 .card:hover { transform: translateY(-2px); border-color: var(--primary); text-decoration: none; }
@@ -85,7 +92,8 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 20px 80px; }
 .meta { color: var(--muted); font-size: .9rem; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 0 0 4px; }
 .meta .sep { opacity: .4; }
 
-/* ---- article ---- */
+/* ---- article (kept narrow & centered for readability even on wide screens) ---- */
+article { max-width: var(--readw); margin: 0 auto; }
 .article-head { padding: 44px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
 .article-head h1 {
   font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 2.4rem;
