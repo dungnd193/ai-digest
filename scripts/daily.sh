@@ -50,12 +50,17 @@ else
   pkill -f "ollama serve" 2>/dev/null && ok "stopped ollama" || warn "ollama was not running"
 fi
 
-# --- 3. start the Telegram approver, detached so it outlives this script ---
-say "Starting Telegram approver (background)"
-setsid bash -c "cd '$ROOT' && PATH=\"\$HOME/.local/bin:\$PATH\" PYTHONPATH='$ROOT' exec uv run python -m digest.approver" \
-  > "$LOG_DIR/approver.log" 2>&1 < /dev/null &
-sleep 3
-pgrep -f "digest.approver" >/dev/null && ok "approver running (approve posts in Telegram)" || warn "approver failed to start — see $LOG_DIR/approver.log"
+# --- 3. start the Telegram approver only if approval is required ---
+APPROVAL="$(grep -E '^approval_required:' digest/config/settings.yaml 2>/dev/null | sed 's/#.*//' | cut -d: -f2- | tr -d ' "'\''' )"
+if [ "$APPROVAL" = "true" ]; then
+  say "Starting Telegram approver (background)"
+  setsid bash -c "cd '$ROOT' && PATH=\"\$HOME/.local/bin:\$PATH\" PYTHONPATH='$ROOT' exec uv run python -m digest.approver" \
+    > "$LOG_DIR/approver.log" 2>&1 < /dev/null &
+  sleep 3
+  pgrep -f "digest.approver" >/dev/null && ok "approver running (approve posts in Telegram)" || warn "approver failed to start — see $LOG_DIR/approver.log"
+else
+  say "Auto-publish mode (approval_required=false) — approver not needed"
+fi
 
 # --- 4. run the pipeline once ---
 say "Running daily digest (orchestrator)"
