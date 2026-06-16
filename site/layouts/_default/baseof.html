@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ if .Title }}{{ .Title }} · {{ end }}{{ .Site.Title }}</title>
+</head>
+<body>
+  <header>
+    <a href="{{ "/" | relLangURL }}">{{ .Site.Title }}</a>
+    {{ range .Site.Languages }}
+      <a href="{{ printf "/%s/" .Lang | relURL }}">{{ .LanguageName }}</a>
+    {{ end }}
+  </header>
+  <main>{{ block "main" . }}{{ end }}</main>
+</body>
+</html>
